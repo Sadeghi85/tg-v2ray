@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime, timedelta
+from datetime import datetime, timezone, timedelta
 import re
 import json
 import base64
@@ -8,18 +8,12 @@ from urllib.parse import urlparse
 import html
 
 
-pattern_subscribe = (
-    r"(?<=(?:[\s]|[<>]))(https?://[^\s<>]+?subscribe\?token=[^\s<>]+)(?=[<>])"
-)
-pattern_ss = r"(?<=(?:[\s]|[<>]))(ss://[^\s<>]+)(?=[<>])"
-pattern_trojan = r"(?<=(?:[\s]|[<>]))(trojan://[^\s<>]+)(?=[<>])"
-pattern_vmess = r"(?<=(?:[\s]|[<>]))(vmess://[^\s<>]+)(?=[<>])"
-pattern_vless = (
-    r"(?<=(?:[\s]|[<>]))(vless://[^\s<>]+?security=(?!reality)[^\s<>]+)(?=[<>])"
-)
-pattern_reality = (
-    r"(?<=(?:[\s]|[<>]))(vless://[^\s<>]+?security=reality[^\s<>]+)(?=[<>])"
-)
+pattern_subscribe = r"(?<!\w)(https?://[^\s]+?subscribe\?token=[^\s]+)"
+pattern_ss = r"(?<!\w)(ss://[^\s]+)"
+pattern_trojan = r"(?<!\w)(trojan://[^\s]+)"
+pattern_vmess = r"(?<!\w)(vmess://[^\s]+)"
+pattern_vless = r"(?<!\w)(vless://[^\s]+?security=(?!reality)[^\s]+)"
+pattern_reality = r"(?<!\w)(vless://[^\s]+?security=reality[^\s]+)"
 
 array_subscribe = []
 array_subscribe_decoded = []
@@ -43,18 +37,22 @@ for channel in v2ray_channels:
 
         div_messages = soup.find_all("div", class_="tgme_widget_message")
 
-        for div_message in div_message:
+        for div_message in div_messages:
             time_tag = div_message.find("time")
             datetime_attribute = time_tag["datetime"]
 
+            print(datetime_attribute + "\n")
+
             datetime_object = datetime.fromisoformat(datetime_attribute)
 
-            if datetime.now() - datetime_object < timedelta(days=1):
+            if datetime.now(timezone.utc) - datetime_object < timedelta(days=1):
                 div_message_text = div_message.find(
                     "div", class_="tgme_widget_message_text"
                 )
 
                 text_content = div_message_text.get_text()
+
+                print(text_content + "\n")
 
                 matches_subscribe = re.findall(pattern_subscribe, text_content)
                 matches_ss = re.findall(pattern_ss, text_content)
@@ -91,8 +89,8 @@ for channel in v2ray_channels:
                 array_vmess.extend(matches_vmess)
                 array_vless.extend(matches_vless)
                 array_reality.extend(matches_reality)
-    except:
-        pass
+    except Exception as e:
+        print("An exception occurred:", e)
 
 for subscribe in array_subscribe:
     try:
@@ -111,10 +109,10 @@ for subscribe in array_subscribe:
                 matches_subscribe_decoded[index] = re.sub(r"#[^#]+$", "", element)
 
             array_subscribe_decoded.extend(matches_subscribe_decoded)
-        except:
-            pass
-    except:
-        pass
+        except Exception as e:
+            print("An exception occurred:", e)
+    except Exception as e:
+        print("An exception occurred:", e)
 
 array_all = array_ss + array_trojan + array_vmess + array_vless + array_reality
 
