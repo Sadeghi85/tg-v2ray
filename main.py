@@ -83,45 +83,58 @@ for subscribe in array_subscribe:
 
 array_all = array_ss + array_trojan + array_vmess + array_vless + array_reality
 
-with open("v2ray_all_base64.txt", "w", encoding="utf-8") as file:
+
+with open("./generated/subs/all", "w", encoding="utf-8") as file:
     file.write(base64.b64encode("\n".join(array_all).encode("utf-8")).decode("utf-8"))
 
-with open("v2ray_subscribe_decoded_base64.txt", "w", encoding="utf-8") as file:
+with open("./generated/subs/subscribe", "w", encoding="utf-8") as file:
     file.write(
         base64.b64encode("\n".join(array_subscribe_decoded).encode("utf-8")).decode(
             "utf-8"
         )
     )
-with open("v2ray_ss_base64.txt", "w", encoding="utf-8") as file:
+
+
+""" 
+
+with open("./generated/v2ray_all_base64.txt", "w", encoding="utf-8") as file:
+    file.write(base64.b64encode("\n".join(array_all).encode("utf-8")).decode("utf-8"))
+
+with open("./generated/v2ray_subscribe_decoded_base64.txt", "w", encoding="utf-8") as file:
+    file.write(
+        base64.b64encode("\n".join(array_subscribe_decoded).encode("utf-8")).decode(
+            "utf-8"
+        )
+    )
+with open("./generated/v2ray_ss_base64.txt", "w", encoding="utf-8") as file:
     file.write(base64.b64encode("\n".join(array_ss).encode("utf-8")).decode("utf-8"))
-with open("v2ray_trojan_base64.txt", "w", encoding="utf-8") as file:
+with open("./generated/v2ray_trojan_base64.txt", "w", encoding="utf-8") as file:
     file.write(
         base64.b64encode("\n".join(array_trojan).encode("utf-8")).decode("utf-8")
     )
-with open("v2ray_vmess_base64.txt", "w", encoding="utf-8") as file:
+with open("./generated/v2ray_vmess_base64.txt", "w", encoding="utf-8") as file:
     file.write(base64.b64encode("\n".join(array_vmess).encode("utf-8")).decode("utf-8"))
-with open("v2ray_vless_base64.txt", "w", encoding="utf-8") as file:
+with open("./generated/v2ray_vless_base64.txt", "w", encoding="utf-8") as file:
     file.write(base64.b64encode("\n".join(array_vless).encode("utf-8")).decode("utf-8"))
-with open("v2ray_reality_base64.txt", "w", encoding="utf-8") as file:
+with open("./generated/v2ray_reality_base64.txt", "w", encoding="utf-8") as file:
     file.write(
         base64.b64encode("\n".join(array_reality).encode("utf-8")).decode("utf-8")
     )
+ """
 
-
-with open("v2ray_all.txt", "w", encoding="utf-8") as file:
+with open("./generated/v2ray_all.txt", "w", encoding="utf-8") as file:
     file.writelines(f"{element}\n" for element in array_all)
-
-with open("v2ray_subscribe_decoded.txt", "w", encoding="utf-8") as file:
+with open("./generated/v2ray_subscribe_decoded.txt", "w", encoding="utf-8") as file:
     file.writelines(f"{element}\n" for element in array_subscribe_decoded)
-with open("v2ray_subscribe.txt", "w", encoding="utf-8") as file:
+with open("./generated/v2ray_subscribe.txt", "w", encoding="utf-8") as file:
     file.writelines(f"{element}\n" for element in array_subscribe)
-with open("v2ray_ss.txt", "w", encoding="utf-8") as file:
+with open("./generated/v2ray_ss.txt", "w", encoding="utf-8") as file:
     file.writelines(f"{element}\n" for element in array_ss)
-with open("v2ray_trojan.txt", "w", encoding="utf-8") as file:
+with open("./generated/v2ray_trojan.txt", "w", encoding="utf-8") as file:
     file.writelines(f"{element}\n" for element in array_trojan)
-with open("v2ray_vmess.txt", "w", encoding="utf-8") as file:
+with open("./generated/v2ray_vmess.txt", "w", encoding="utf-8") as file:
     file.writelines(f"{element}\n" for element in array_vmess)
-with open("v2ray_vless.txt", "w", encoding="utf-8") as file:
+with open("./generated/v2ray_vless.txt", "w", encoding="utf-8") as file:
     file.writelines(f"{element}\n" for element in array_vless)
-with open("v2ray_reality.txt", "w", encoding="utf-8") as file:
+with open("./generated/v2ray_reality.txt", "w", encoding="utf-8") as file:
     file.writelines(f"{element}\n" for element in array_reality)
