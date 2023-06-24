@@ -1,16 +1,25 @@
 import requests
+from bs4 import BeautifulSoup
+from datetime import datetime, timedelta
 import re
 import json
 import base64
 from urllib.parse import urlparse
+import html
 
 
-pattern_subscribe = r"(?<=(?:[\s]|[<>]))(https?://[^\s<>]+?subscribe\?token=[^\s<>]+)"
-pattern_ss = r"(?<=(?:[\s]|[<>]))(ss://[^\s<>]+)"
-pattern_trojan = r"(?<=(?:[\s]|[<>]))(trojan://[^\s<>]+)"
-pattern_vmess = r"(?<=(?:[\s]|[<>]))(vmess://[^\s<>]+)"
-pattern_vless = r"(?<=(?:[\s]|[<>]))(vless://[^\s<>]+?security=(?!reality)[^\s<>]+)"
-pattern_reality = r"(?<=(?:[\s]|[<>]))(vless://[^\s<>]+?security=reality[^\s<>]+)"
+pattern_subscribe = (
+    r"(?<=(?:[\s]|[<>]))(https?://[^\s<>]+?subscribe\?token=[^\s<>]+)(?=[<>])"
+)
+pattern_ss = r"(?<=(?:[\s]|[<>]))(ss://[^\s<>]+)(?=[<>])"
+pattern_trojan = r"(?<=(?:[\s]|[<>]))(trojan://[^\s<>]+)(?=[<>])"
+pattern_vmess = r"(?<=(?:[\s]|[<>]))(vmess://[^\s<>]+)(?=[<>])"
+pattern_vless = (
+    r"(?<=(?:[\s]|[<>]))(vless://[^\s<>]+?security=(?!reality)[^\s<>]+)(?=[<>])"
+)
+pattern_reality = (
+    r"(?<=(?:[\s]|[<>]))(vless://[^\s<>]+?security=reality[^\s<>]+)(?=[<>])"
+)
 
 array_subscribe = []
 array_subscribe_decoded = []
@@ -28,32 +37,60 @@ for channel in v2ray_channels:
     try:
         url = "https://t.me/s/" + channel
         response = requests.get(url)
-        text_content = response.text
+        html_content = response.text
 
-        matches_subscribe = re.findall(pattern_subscribe, text_content)
-        matches_ss = re.findall(pattern_ss, text_content)
-        matches_trojan = re.findall(pattern_trojan, text_content)
-        matches_vmess = re.findall(pattern_vmess, text_content)
-        matches_vless = re.findall(pattern_vless, text_content)
-        matches_reality = re.findall(pattern_reality, text_content)
+        soup = BeautifulSoup(html_content, "html.parser")
 
-        for index, element in enumerate(matches_ss):
-            matches_ss[index] = re.sub(r"#[^#]+$", "", element) + "#" + channel
-        for index, element in enumerate(matches_trojan):
-            matches_trojan[index] = re.sub(r"#[^#]+$", "", element) + "#" + channel
-        for index, element in enumerate(matches_vmess):
-            matches_vmess[index] = re.sub(r"#[^#]+$", "", element) + "#" + channel
-        for index, element in enumerate(matches_vless):
-            matches_vless[index] = re.sub(r"#[^#]+$", "", element) + "#" + channel
-        for index, element in enumerate(matches_reality):
-            matches_reality[index] = re.sub(r"#[^#]+$", "", element) + "#" + channel
+        div_messages = soup.find_all("div", class_="tgme_widget_message")
 
-        array_subscribe.extend(matches_subscribe)
-        array_ss.extend(matches_ss)
-        array_trojan.extend(matches_trojan)
-        array_vmess.extend(matches_vmess)
-        array_vless.extend(matches_vless)
-        array_reality.extend(matches_reality)
+        for div_message in div_message:
+            time_tag = div_message.find("time")
+            datetime_attribute = time_tag["datetime"]
+
+            datetime_object = datetime.fromisoformat(datetime_attribute)
+
+            if datetime.now() - datetime_object < timedelta(days=1):
+                div_message_text = div_message.find(
+                    "div", class_="tgme_widget_message_text"
+                )
+
+                text_content = div_message_text.get_text()
+
+                matches_subscribe = re.findall(pattern_subscribe, text_content)
+                matches_ss = re.findall(pattern_ss, text_content)
+                matches_trojan = re.findall(pattern_trojan, text_content)
+                matches_vmess = re.findall(pattern_vmess, text_content)
+                matches_vless = re.findall(pattern_vless, text_content)
+                matches_reality = re.findall(pattern_reality, text_content)
+
+                for index, element in enumerate(matches_ss):
+                    matches_ss[index] = re.sub(r"#[^#]+$", "", html.unescape(element))
+                for index, element in enumerate(matches_trojan):
+                    matches_trojan[index] = re.sub(
+                        r"#[^#]+$", "", html.unescape(element)
+                    )
+
+                for index, element in enumerate(matches_vmess):
+                    matches_vmess[index] = re.sub(
+                        r"#[^#]+$", "", html.unescape(element)
+                    )
+
+                for index, element in enumerate(matches_vless):
+                    matches_vless[index] = re.sub(
+                        r"#[^#]+$", "", html.unescape(element)
+                    )
+
+                for index, element in enumerate(matches_reality):
+                    matches_reality[index] = re.sub(
+                        r"#[^#]+$", "", html.unescape(element)
+                    )
+
+                array_subscribe.extend(matches_subscribe)
+                array_ss.extend(matches_ss)
+                array_trojan.extend(matches_trojan)
+                array_vmess.extend(matches_vmess)
+                array_vless.extend(matches_vless)
+                array_reality.extend(matches_reality)
     except:
         pass
 
@@ -71,9 +108,7 @@ for subscribe in array_subscribe:
             matches_subscribe_decoded = decoded.splitlines()
 
             for index, element in enumerate(matches_subscribe_decoded):
-                matches_subscribe_decoded[index] = (
-                    re.sub(r"#[^#]+$", "", element) + "#" + hostname
-                )
+                matches_subscribe_decoded[index] = re.sub(r"#[^#]+$", "", element)
 
             array_subscribe_decoded.extend(matches_subscribe_decoded)
         except:
@@ -92,6 +127,21 @@ with open("./generated/subs/subscribe", "w", encoding="utf-8") as file:
         base64.b64encode("\n".join(array_subscribe_decoded).encode("utf-8")).decode(
             "utf-8"
         )
+    )
+
+with open("./generated/subs/ss", "w", encoding="utf-8") as file:
+    file.write(base64.b64encode("\n".join(array_ss).encode("utf-8")).decode("utf-8"))
+with open("./generated/subs/trojan", "w", encoding="utf-8") as file:
+    file.write(
+        base64.b64encode("\n".join(array_trojan).encode("utf-8")).decode("utf-8")
+    )
+with open("./generated/subs/vmess", "w", encoding="utf-8") as file:
+    file.write(base64.b64encode("\n".join(array_vmess).encode("utf-8")).decode("utf-8"))
+with open("./generated/subs/vless", "w", encoding="utf-8") as file:
+    file.write(base64.b64encode("\n".join(array_vless).encode("utf-8")).decode("utf-8"))
+with open("./generated/subs/reality", "w", encoding="utf-8") as file:
+    file.write(
+        base64.b64encode("\n".join(array_reality).encode("utf-8")).decode("utf-8")
     )
 
 
@@ -122,7 +172,7 @@ with open("./generated/v2ray_reality_base64.txt", "w", encoding="utf-8") as file
     )
  """
 
-with open("./generated/v2ray_all.txt", "w", encoding="utf-8") as file:
+""" with open("./generated/v2ray_all.txt", "w", encoding="utf-8") as file:
     file.writelines(f"{element}\n" for element in array_all)
 with open("./generated/v2ray_subscribe_decoded.txt", "w", encoding="utf-8") as file:
     file.writelines(f"{element}\n" for element in array_subscribe_decoded)
@@ -138,3 +188,4 @@ with open("./generated/v2ray_vless.txt", "w", encoding="utf-8") as file:
     file.writelines(f"{element}\n" for element in array_vless)
 with open("./generated/v2ray_reality.txt", "w", encoding="utf-8") as file:
     file.writelines(f"{element}\n" for element in array_reality)
+ """
