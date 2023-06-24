@@ -8,12 +8,12 @@ from urllib.parse import urlparse
 import html
 
 
-pattern_subscribe = r"(?<!\w)(https?://[^\s]+?subscribe\?token=[^\s]+)"
-pattern_ss = r"(?<!\w)(ss://[^\s]+)"
-pattern_trojan = r"(?<!\w)(trojan://[^\s]+)"
-pattern_vmess = r"(?<!\w)(vmess://[^\s]+)"
-pattern_vless = r"(?<!\w)(vless://[^\s]+?security=(?!reality)[^\s]+)"
-pattern_reality = r"(?<!\w)(vless://[^\s]+?security=reality[^\s]+)"
+pattern_subscribe = r"(?<!\w)(https?://[^\s<>]+?subscribe\?token=[^\s<>]+)"
+pattern_ss = r"(?<!\w)(ss://[^\s<>]+)"
+pattern_trojan = r"(?<!\w)(trojan://[^\s<>]+)"
+pattern_vmess = r"(?<!\w)(vmess://[^\s<>]+)"
+pattern_vless = r"(?<!\w)(vless://[^\s<>]+?security=(?!reality)[^\s<>]+)"
+pattern_reality = r"(?<!\w)(vless://[^\s<>]+?security=reality[^\s<>]+)"
 
 array_subscribe = []
 array_subscribe_decoded = []
