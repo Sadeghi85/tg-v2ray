@@ -24,7 +24,7 @@ array_vmess = []
 array_vless = []
 array_reality = []
 
-with open("v2ray_channels.json") as file:
+with open("v2ray_channels_test.json") as file:
     v2ray_channels = json.load(file)
 
 for channel in v2ray_channels:
@@ -50,7 +50,7 @@ for channel in v2ray_channels:
                     "div", class_="tgme_widget_message_text"
                 )
 
-                text_content = div_message_text.get_text()
+                text_content = div_message_text.prettify()
 
                 print(text_content + "\n")
 
