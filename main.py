@@ -6,6 +6,7 @@ import json
 import base64
 from urllib.parse import urlparse
 import html
+import traceback
 
 
 pattern_subscribe = (
@@ -40,14 +41,17 @@ for channel in v2ray_channels:
         div_messages = soup.find_all("div", class_="tgme_widget_message")
 
         for div_message in div_messages:
-            time_tag = div_message.find("time")
+            div_message_info = div_message.find(
+                "div", class_="tgme_widget_message_info"
+            )
+            time_tag = div_message_info.find("time")
             datetime_attribute = time_tag["datetime"]
 
             print(datetime_attribute + "\n")
 
             datetime_object = datetime.fromisoformat(datetime_attribute)
 
-            if datetime.now(timezone.utc) - datetime_object < timedelta(days=1):
+            if datetime.now(timezone.utc) - datetime_object < timedelta(days=2):
                 div_message_text = div_message.find(
                     "div", class_="tgme_widget_message_text"
                 )
@@ -93,6 +97,7 @@ for channel in v2ray_channels:
                 array_reality.extend(matches_reality)
     except Exception as e:
         print("An exception occurred:", e)
+        traceback.print_exc()
 
 for subscribe in array_subscribe:
     try:
