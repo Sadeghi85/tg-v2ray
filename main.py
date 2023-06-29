@@ -121,6 +121,14 @@ for subscribe in array_subscribe:
     except Exception as e:
         print("An exception occurred:", e)
 
+
+array_subscribe_decoded = list(set(array_subscribe_decoded))
+array_ss = list(set(array_ss))
+array_trojan = list(set(array_trojan))
+array_vmess = list(set(array_vmess))
+array_vless = list(set(array_vless))
+array_reality = list(set(array_reality))
+
 array_all = array_ss + array_trojan + array_vmess + array_vless + array_reality
 
 
