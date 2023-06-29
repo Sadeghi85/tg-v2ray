@@ -1,0 +1,89 @@
+import ipaddress
+import re
+import socket
+import requests
+import json
+
+
+def is_valid_ip_address(ip):
+    try:
+        ipaddress.ip_address(ip)
+        return True
+    except ValueError:
+        return False
+
+
+def is_ipv6(ip):
+    try:
+        ipaddress.ip_address(ip)
+        if ":" in ip:
+            return True
+        else:
+            return False
+    except ValueError:
+        return False
+
+
+def get_ip(node):
+    try:
+        return socket.gethostbyname(node)
+    except Exception:
+        return node
+
+
+def get_country_flag_html_entity(country_code):
+    if country_code == "":
+        return "&#127937;"
+
+    base = 127397  # Base value for regional indicator symbol letters
+    codepoints = [ord(c) + base for c in country_code.upper()]
+    return "".join(["&#x{:X};".format(c) for c in codepoints])
+
+
+def get_country_from_ip(ip):
+    api = f"https://api.country.is/{ip}"
+
+    try:
+        json_dict = json.loads(requests.get(api).text)
+        return json_dict["country"]
+    except Exception:
+        return ""
+
+
+def make_title(array_input, type):
+    result = []
+
+    if type == "reality":
+        pattern = r"vless://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)"
+
+        for element in array_input:
+            print(element + "\n")
+
+            match = re.match(pattern, element)
+
+            config = {
+                "id": match.group("id"),
+                "ip": match.group("ip"),
+                "port": match.group("port"),
+                "params": match.group("params"),
+                "channel": match.group("channel"),
+            }
+
+            if not is_valid_ip_address(config["ip"]):
+                config["ip"] = get_ip(config["ip"])
+
+            flag = get_country_flag_html_entity(get_country_from_ip(config["ip"]))
+
+            config["title"] = f"Reality|@{config['channel']}|{flag}"
+
+            if is_ipv6(config["ip"]):
+                config["ip"] = f"[{config['ip']}]"
+
+            result.append(
+                f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"
+            )
+
+    else:
+        result = array_input
+
+    return result

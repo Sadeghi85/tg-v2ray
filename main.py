@@ -7,6 +7,7 @@ import base64
 from urllib.parse import urlparse
 import html
 import traceback
+from title import make_title
 
 
 pattern_subscribe = (
@@ -85,8 +86,8 @@ for channel in v2ray_channels:
                     )
 
                 for index, element in enumerate(matches_reality):
-                    matches_reality[index] = re.sub(
-                        r"#[^#]+$", "", html.unescape(element)
+                    matches_reality[index] = (
+                        re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#{channel}"
                     )
 
                 array_subscribe.extend(matches_subscribe)
@@ -128,6 +129,8 @@ array_trojan = list(set(array_trojan))
 array_vmess = list(set(array_vmess))
 array_vless = list(set(array_vless))
 array_reality = list(set(array_reality))
+
+array_reality = make_title(array_input=array_reality, type="reality")
 
 array_all = array_ss + array_trojan + array_vmess + array_vless + array_reality
 
