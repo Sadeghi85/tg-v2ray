@@ -59,7 +59,7 @@ for channel in v2ray_channels:
 
                 text_content = div_message_text.prettify()
 
-                print(text_content + "\n")
+                # print(text_content + "\n")
 
                 matches_subscribe = re.findall(pattern_subscribe, text_content)
                 matches_ss = re.findall(pattern_ss, text_content)
@@ -121,6 +121,7 @@ for subscribe in array_subscribe:
             print("An exception occurred:", e)
     except Exception as e:
         print("An exception occurred:", e)
+        traceback.print_exc()
 
 
 array_subscribe_decoded = list(set(array_subscribe_decoded))
