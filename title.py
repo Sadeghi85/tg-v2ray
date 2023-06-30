@@ -34,7 +34,7 @@ def get_ip(node):
 
 def get_country_flag(country_code):
     if country_code == "":
-        return html.unescape("&#127937;")
+        return html.unescape("&#127988;&#8205;&#9760;&#65039;")
 
     base = 127397  # Base value for regional indicator symbol letters
     codepoints = [ord(c) + base for c in country_code.upper()]
@@ -42,11 +42,12 @@ def get_country_flag(country_code):
 
 
 def get_country_from_ip(ip):
-    api = f"https://api.country.is/{ip}"
+    api = f"https://ipapi.co/{ip}/country/"
 
     try:
-        json_dict = json.loads(requests.get(api).text)
-        return json_dict["country"]
+        # json_dict = json.loads(requests.get(api).text)
+        # return json_dict["country"]
+        return requests.get(api).text
     except Exception:
         return ""
 
