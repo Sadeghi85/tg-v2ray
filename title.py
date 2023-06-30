@@ -3,6 +3,7 @@ import re
 import socket
 import requests
 import json
+import html
 
 
 def is_valid_ip_address(ip):
@@ -31,13 +32,13 @@ def get_ip(node):
         return node
 
 
-def get_country_flag_html_entity(country_code):
+def get_country_flag(country_code):
     if country_code == "":
-        return "&#127937;"
+        return html.unescape("&#127937;")
 
     base = 127397  # Base value for regional indicator symbol letters
     codepoints = [ord(c) + base for c in country_code.upper()]
-    return "".join(["&#x{:X};".format(c) for c in codepoints])
+    return html.unescape("".join(["&#x{:X};".format(c) for c in codepoints]))
 
 
 def get_country_from_ip(ip):
@@ -72,12 +73,19 @@ def make_title(array_input, type):
             if not is_valid_ip_address(config["ip"]):
                 config["ip"] = get_ip(config["ip"])
 
-            flag = get_country_flag_html_entity(get_country_from_ip(config["ip"]))
+            flag = get_country_flag(get_country_from_ip(config["ip"]))
 
             config["title"] = f"Reality|@{config['channel']}|{flag}"
 
             if is_ipv6(config["ip"]):
                 config["ip"] = f"[{config['ip']}]"
+
+            if any(
+                f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                in s
+                for s in result
+            ):
+                continue
 
             result.append(
                 f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"
