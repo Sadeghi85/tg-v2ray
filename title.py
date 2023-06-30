@@ -42,12 +42,12 @@ def get_country_flag(country_code):
 
 
 def get_country_from_ip(ip):
-    api = f"https://ipapi.co/{ip}/country/"
+    api = f"https://api.country.is/{ip}"
 
     try:
-        # json_dict = json.loads(requests.get(api).text)
-        # return json_dict["country"]
-        return requests.get(api).text
+        json_dict = json.loads(requests.get(api).text)
+        return json_dict["country"]
+
     except Exception:
         return ""
 
