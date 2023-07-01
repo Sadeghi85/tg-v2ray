@@ -42,67 +42,70 @@ for channel in v2ray_channels:
         div_messages = soup.find_all("div", class_="tgme_widget_message")
 
         for div_message in div_messages:
-            div_message_info = div_message.find(
-                "div", class_="tgme_widget_message_info"
-            )
-            time_tag = div_message_info.find("time")
-            datetime_attribute = time_tag["datetime"]
-
-            print(datetime_attribute + "\n")
-
-            datetime_object = datetime.fromisoformat(datetime_attribute)
-
-            if datetime.now(timezone.utc) - datetime_object < timedelta(days=2):
-                div_message_text = div_message.find(
-                    "div", class_="tgme_widget_message_text"
+            try:
+                div_message_info = div_message.find(
+                    "div", class_="tgme_widget_message_info"
                 )
+                time_tag = div_message_info.find("time")
+                datetime_attribute = time_tag["datetime"]
 
-                text_content = div_message_text.prettify()
+                print(datetime_attribute + "\n")
 
-                # print(text_content + "\n")
+                datetime_object = datetime.fromisoformat(datetime_attribute)
 
-                matches_subscribe = re.findall(pattern_subscribe, text_content)
-                matches_ss = re.findall(pattern_ss, text_content)
-                matches_trojan = re.findall(pattern_trojan, text_content)
-                matches_vmess = re.findall(pattern_vmess, text_content)
-                matches_vless = re.findall(pattern_vless, text_content)
-                matches_reality = re.findall(pattern_reality, text_content)
-
-                for index, element in enumerate(matches_ss):
-                    matches_ss[index] = re.sub(r"#[^#]+$", "", html.unescape(element))
-                for index, element in enumerate(matches_trojan):
-                    matches_trojan[index] = re.sub(
-                        r"#[^#]+$", "", html.unescape(element)
+                if datetime.now(timezone.utc) - datetime_object < timedelta(days=2):
+                    div_message_text = div_message.find(
+                        "div", class_="tgme_widget_message_text"
                     )
 
-                for index, element in enumerate(matches_vmess):
-                    matches_vmess[index] = re.sub(
-                        r"#[^#]+$", "", html.unescape(element)
-                    )
+                    text_content = div_message_text.prettify()
 
-                for index, element in enumerate(matches_vless):
-                    matches_vless[index] = re.sub(
-                        r"#[^#]+$", "", html.unescape(element)
-                    )
+                    # print(text_content + "\n")
 
-                for index, element in enumerate(matches_reality):
-                    matches_reality[index] = (
-                        re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#{channel}"
-                    )
+                    matches_subscribe = re.findall(pattern_subscribe, text_content)
+                    matches_ss = re.findall(pattern_ss, text_content)
+                    matches_trojan = re.findall(pattern_trojan, text_content)
+                    matches_vmess = re.findall(pattern_vmess, text_content)
+                    matches_vless = re.findall(pattern_vless, text_content)
+                    matches_reality = re.findall(pattern_reality, text_content)
 
-                matches_subscribe = [x for x in matches_subscribe if "…" not in x]
-                matches_ss = [x for x in matches_ss if "…" not in x]
-                matches_trojan = [x for x in matches_trojan if "…" not in x]
-                matches_vmess = [x for x in matches_vmess if "…" not in x]
-                matches_vless = [x for x in matches_vless if "…" not in x]
-                matches_reality = [x for x in matches_reality if "…" not in x]
+                    for index, element in enumerate(matches_ss):
+                        matches_ss[index] = re.sub(r"#[^#]+$", "", html.unescape(element))
+                    for index, element in enumerate(matches_trojan):
+                        matches_trojan[index] = re.sub(
+                            r"#[^#]+$", "", html.unescape(element)
+                        )
 
-                array_subscribe.extend(matches_subscribe)
-                array_ss.extend(matches_ss)
-                array_trojan.extend(matches_trojan)
-                array_vmess.extend(matches_vmess)
-                array_vless.extend(matches_vless)
-                array_reality.extend(matches_reality)
+                    for index, element in enumerate(matches_vmess):
+                        matches_vmess[index] = re.sub(
+                            r"#[^#]+$", "", html.unescape(element)
+                        )
+
+                    for index, element in enumerate(matches_vless):
+                        matches_vless[index] = re.sub(
+                            r"#[^#]+$", "", html.unescape(element)
+                        )
+
+                    for index, element in enumerate(matches_reality):
+                        matches_reality[index] = (
+                            re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#{channel}"
+                        )
+
+                    matches_subscribe = [x for x in matches_subscribe if "…" not in x]
+                    matches_ss = [x for x in matches_ss if "…" not in x]
+                    matches_trojan = [x for x in matches_trojan if "…" not in x]
+                    matches_vmess = [x for x in matches_vmess if "…" not in x]
+                    matches_vless = [x for x in matches_vless if "…" not in x]
+                    matches_reality = [x for x in matches_reality if "…" not in x]
+
+                    array_subscribe.extend(matches_subscribe)
+                    array_ss.extend(matches_ss)
+                    array_trojan.extend(matches_trojan)
+                    array_vmess.extend(matches_vmess)
+                    array_vless.extend(matches_vless)
+                    array_reality.extend(matches_reality)
+            except:
+                pass
     except Exception as e:
         print("An exception occurred:", e)
         traceback.print_exc()
