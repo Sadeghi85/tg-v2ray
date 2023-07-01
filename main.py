@@ -90,6 +90,13 @@ for channel in v2ray_channels:
                         re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#{channel}"
                     )
 
+                matches_subscribe = [x for x in matches_subscribe if "…" not in x]
+                matches_ss = [x for x in matches_ss if "…" not in x]
+                matches_trojan = [x for x in matches_trojan if "…" not in x]
+                matches_vmess = [x for x in matches_vmess if "…" not in x]
+                matches_vless = [x for x in matches_vless if "…" not in x]
+                matches_reality = [x for x in matches_reality if "…" not in x]
+
                 array_subscribe.extend(matches_subscribe)
                 array_ss.extend(matches_ss)
                 array_trojan.extend(matches_trojan)
