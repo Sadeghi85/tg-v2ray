@@ -4,6 +4,7 @@ import socket
 import requests
 import json
 import html
+import random
 
 
 def is_valid_ip_address(ip):
@@ -54,6 +55,8 @@ def get_country_from_ip(ip):
 
 def make_title(array_input, type):
     result = []
+
+    random.shuffle(array_input)
 
     if type == "reality":
         pattern = r"vless://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)"
