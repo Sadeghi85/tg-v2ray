@@ -93,7 +93,7 @@ def make_title(array_input, type):
             except:
                 continue
 
-            config["params"] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&mode={dict_params.get('mode', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&spx={dict_params.get('spx', '')}&alpn={dict_params.get('alpn', '')}&"
+            config["params"] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&mode={dict_params.get('mode', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&alpn={dict_params.get('alpn', '')}&"
 
             config['params'] = re.sub(r"\w+=&", "", config['params'])
             config['params'] = re.sub(r"(?:encryption=none&)|(?:mode=multi&)|(?:headerType=none&)", "", config['params'])
