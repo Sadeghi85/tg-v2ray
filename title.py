@@ -29,7 +29,7 @@ def get_ip(node):
     try:
         return socket.gethostbyname(node)
     except Exception:
-        return node
+        return None
 
 
 def get_country_flag(country_code):
@@ -74,6 +74,9 @@ def make_title(array_input, type):
             if not is_valid_ip_address(config["ip"]):
                 config["ip"] = get_ip(config["ip"])
 
+            if config["ip"] == None:
+                continue
+
             flag = get_country_flag(get_country_from_ip(config["ip"]))
 
             config["title"] = f"Reality|@{config['channel']}|{flag}"
@@ -81,6 +84,18 @@ def make_title(array_input, type):
             if is_ipv6(config["ip"]):
                 config["ip"] = f"[{config['ip']}]"
 
+            array_params_input = config["params"].split("&")
+            dict_params = {}
+            for pair in array_params_input:
+                key, value = pair.split('=')
+                dict_params[key] = value
+
+            config["params"] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&mode={dict_params.get('mode', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&spx={dict_params.get('spx', '')}&alpn={dict_params.get('alpn', '')}&"
+
+            config['params'] = re.sub(r"\w+=(?=&)", "", config['params'])
+            config['params'] = re.sub(r"(?:encryption=none&)|(?:mode=multi&)|(?:headerType=none&)", "", config['params'])
+            config['params'] = config['params'].strip("&")
+            
             if any(
                 f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
                 in s
