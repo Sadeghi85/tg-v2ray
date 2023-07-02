@@ -34,7 +34,7 @@ def get_ip(node):
 
 
 def get_country_flag(country_code):
-    if country_code == "":
+    if country_code == None:
         return html.unescape("&#127988;&#8205;&#9760;&#65039;")
 
     base = 127397  # Base value for regional indicator symbol letters
@@ -50,7 +50,7 @@ def get_country_from_ip(ip):
         return json_dict["country"]
 
     except Exception:
-        return ""
+        return None
 
 
 def make_title(array_input, type):

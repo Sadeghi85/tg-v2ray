@@ -84,8 +84,9 @@ for channel in v2ray_channels:
                         )
 
                     for index, element in enumerate(matches_vless):
-                        matches_vless[index] = re.sub(
-                            r"#[^#]+$", "", html.unescape(element) + f"#{channel}"
+                        matches_vless[index] = (
+                            re.sub(r"#[^#]+$", "", html.unescape(element))
+                            + f"#{channel}"
                         )
 
                     for index, element in enumerate(matches_reality):
@@ -144,15 +145,10 @@ array_vmess = list(set(array_vmess))
 array_vless = list(set(array_vless))
 array_reality = list(set(array_reality))
 
-
-with open("./generated/v2ray_vless.txt", "w", encoding="utf-8") as file:
-    file.writelines(f"{element}\n" for element in array_vless)
-
 array_vless = make_title(array_input=array_vless, type="vless")
 array_reality = make_title(array_input=array_reality, type="reality")
 
 array_all = array_ss + array_trojan + array_vmess + array_vless + array_reality
-
 
 with open("./generated/subs/all", "w", encoding="utf-8") as file:
     file.write(base64.b64encode("\n".join(array_all).encode("utf-8")).decode("utf-8"))
