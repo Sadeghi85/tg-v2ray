@@ -58,7 +58,7 @@ def make_title(array_input, type):
 
     random.shuffle(array_input)
 
-    if type == "reality":
+    if type == "reality" or type == "vless":
         pattern = r"vless://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)"
 
         for element in array_input:
@@ -85,20 +85,31 @@ def make_title(array_input, type):
             if is_ipv6(config["ip"]):
                 config["ip"] = f"[{config['ip']}]"
 
-            array_params_input = config["params"].split("&")
+            array_params_input = re.sub(
+                r"allowinsecure",
+                "allowInsecure",
+                re.sub(r"headertype", "headerType", config["params"].lower()),
+            ).split("&")
             dict_params = {}
             try:
                 for pair in array_params_input:
-                    key, value = pair.split('=')
+                    key, value = pair.split("=")
                     dict_params[key] = value
             except:
                 continue
 
-            config["params"] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&alpn={dict_params.get('alpn', '')}&"
+            config[
+                "params"
+            ] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&alpn={dict_params.get('alpn', '')}&allowInsecure={dict_params.get('allowInsecure', '')}&"
 
-            config['params'] = re.sub(r"\w+=&", "", config['params'])
-            config['params'] = re.sub(r"(?:encryption=none&)|(?:headerType=none&)", "", config['params'], flags=re.IGNORECASE)
-            config['params'] = config['params'].strip("&")
+            config["params"] = re.sub(r"\w+=&", "", config["params"])
+            config["params"] = re.sub(
+                r"(?:encryption=none&)|(?:headerType=none&)",
+                "",
+                config["params"],
+                flags=re.IGNORECASE,
+            )
+            config["params"] = config["params"].strip("&")
 
             if any(
                 f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
@@ -107,7 +118,12 @@ def make_title(array_input, type):
             ):
                 continue
 
-            config["title"] = f"Reality | {dict_params.get('sni', '')} | @{config['channel']} | {flag}"
+            if type == "reality":
+                config[
+                    "title"
+                ] = f"Reality | {dict_params.get('sni', '')} | @{config['channel']} | {flag}"
+            else:
+                config["title"] = f"Vless | @{config['channel']} | {flag}"
 
             result.append(
                 f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"

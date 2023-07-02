@@ -70,7 +70,9 @@ for channel in v2ray_channels:
                     matches_reality = re.findall(pattern_reality, text_content)
 
                     for index, element in enumerate(matches_ss):
-                        matches_ss[index] = re.sub(r"#[^#]+$", "", html.unescape(element))
+                        matches_ss[index] = re.sub(
+                            r"#[^#]+$", "", html.unescape(element)
+                        )
                     for index, element in enumerate(matches_trojan):
                         matches_trojan[index] = re.sub(
                             r"#[^#]+$", "", html.unescape(element)
@@ -83,12 +85,13 @@ for channel in v2ray_channels:
 
                     for index, element in enumerate(matches_vless):
                         matches_vless[index] = re.sub(
-                            r"#[^#]+$", "", html.unescape(element)
+                            r"#[^#]+$", "", html.unescape(element) + f"#{channel}"
                         )
 
                     for index, element in enumerate(matches_reality):
                         matches_reality[index] = (
-                            re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#{channel}"
+                            re.sub(r"#[^#]+$", "", html.unescape(element))
+                            + f"#{channel}"
                         )
 
                     matches_subscribe = [x for x in matches_subscribe if "…" not in x]
@@ -141,6 +144,7 @@ array_vmess = list(set(array_vmess))
 array_vless = list(set(array_vless))
 array_reality = list(set(array_reality))
 
+array_vless = make_title(array_input=array_vless, type="vless")
 array_reality = make_title(array_input=array_reality, type="reality")
 
 array_all = array_ss + array_trojan + array_vmess + array_vless + array_reality
