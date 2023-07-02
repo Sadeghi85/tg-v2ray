@@ -64,7 +64,10 @@ def make_title(array_input, type):
         for element in array_input:
             print(element + "\n")
 
-            match = re.match(pattern, element)
+            match = re.match(pattern, element, flags=re.IGNORECASE)
+
+            if match == None:
+                continue
 
             config = {
                 "id": match.group("id"),

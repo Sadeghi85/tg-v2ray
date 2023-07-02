@@ -144,6 +144,10 @@ array_vmess = list(set(array_vmess))
 array_vless = list(set(array_vless))
 array_reality = list(set(array_reality))
 
+
+with open("./generated/v2ray_vless.txt", "w", encoding="utf-8") as file:
+    file.writelines(f"{element}\n" for element in array_vless)
+
 array_vless = make_title(array_input=array_vless, type="vless")
 array_reality = make_title(array_input=array_reality, type="reality")
 
