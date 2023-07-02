@@ -93,18 +93,14 @@ def make_title(array_input, type):
             try:
                 for pair in array_params_input:
                     key, value = pair.split("=")
-                    key = re.sub(
-                        r"allowinsecure",
-                        "allowInsecure",
-                        re.sub(r"headertype", "headerType", key.lower()),
-                    )
+                    key = re.sub(r"headertype", "headerType", key.lower())
                     dict_params[key] = value
             except:
                 continue
 
             config[
                 "params"
-            ] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&alpn={dict_params.get('alpn', '')}&allowInsecure=true&"
+            ] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&alpn={dict_params.get('alpn', '')}&"
 
             config["params"] = re.sub(r"\w+=&", "", config["params"])
             config["params"] = re.sub(
