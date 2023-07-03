@@ -60,9 +60,11 @@ for channel in v2ray_channels:
 
                     text_content = div_message_text.prettify()
 
-                    text_content = re.sub(r"<a [^<>]+>([^<>]+)</a>", "\1", text_content)
+                    text_content = re.sub(
+                        r"<\s*a\s*[^<>]+>([^<>]+)<\s*/\s*a\s*>", "\1", text_content
+                    )
 
-                    # print(text_content + "\n")
+                    print(text_content + "\n")
 
                     matches_subscribe = re.findall(pattern_subscribe, text_content)
                     matches_ss = re.findall(pattern_ss, text_content)
