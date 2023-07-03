@@ -85,12 +85,12 @@ def check_connection(ip: str, port: int, sni: str, security: str):
             ssl_socket.sendall(data.encode())
 
             received_data = ssl_socket.recv(1024)
-            print(f"length: {len(received_data)}\ndata:\n{received_data.decode()}\n")
-            print(
-                "_________________________________________________________________________________"
-            )
+            print(f"length: {len(received_data)}\n")
+            # print(f"data:\n{received_data.decode()}\n")
 
             ssl_socket.close()
+        except ssl.SSLCertVerificationError:
+            return True
         except Exception as e:
             print(f"Exception ({type(e).__name__}) -> '{e}'\n")
             return False
@@ -99,17 +99,16 @@ def check_connection(ip: str, port: int, sni: str, security: str):
             client_socket.sendall(data.encode())
 
             received_data = client_socket.recv(1024)
-            print(f"length: {len(received_data)}\ndata:\n{received_data.decode()}\n")
-            print(
-                "_________________________________________________________________________________"
-            )
+            print(f"length: {len(received_data)}\n")
+            # print(f"data:\n{received_data.decode()}\n")
 
             client_socket.close()
+
         except Exception as e:
             print(f"Exception ({type(e).__name__}) -> '{e}'\n")
             return False
 
-    if len(received_data) > 0:
+    if len(received_data) > 0 or not (security == "reality" or security == "tls"):
         return True
 
     return False
@@ -160,7 +159,11 @@ def make_title(array_input, type):
                 check_connection(
                     config["host"],
                     int(config["port"]),
-                    config["host"]
+                    (
+                        dict_params.get("sni", config["host"])
+                        if is_valid_ip_address(config["host"])
+                        else config["host"]
+                    )
                     if dict_params.get("security", "none") == "tls"
                     else dict_params.get("sni", config["host"]),
                     dict_params.get("security", "none"),
