@@ -1,6 +1,7 @@
 import ipaddress
 import re
 import socket
+import ssl
 import requests
 import json
 import html
@@ -53,6 +54,67 @@ def get_country_from_ip(ip):
         return None
 
 
+def check_connection(ip: str, port: int, sni: str, security: str):
+    if is_ipv6(ip):
+        server_address = (ip, port, 0, 0)
+    else:
+        server_address = (ip, port)
+
+    print(f"{ip}:{port}->{sni}\n")
+
+    try:
+        if is_ipv6(ip):
+            client_socket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM, 0)
+        else:
+            client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        client_socket.settimeout(5)
+        client_socket.connect(server_address)
+    except Exception as e:
+        print(f"{ip}:{port} not responding -> '{e}'\n")
+        return False
+
+    data = "Hello, server!"
+    received_data = ""
+
+    if security == "reality" or security == "tls":
+        try:
+            ssl_context = ssl.create_default_context()
+            ssl_socket = ssl_context.wrap_socket(client_socket, server_hostname=sni)
+
+            ssl_socket.sendall(data.encode())
+
+            received_data = ssl_socket.recv(1024)
+            print(f"length: {len(received_data)}\ndata:\n{received_data.decode()}\n")
+            print(
+                "_________________________________________________________________________________"
+            )
+
+            ssl_socket.close()
+        except Exception as e:
+            print(f"Exception ({type(e).__name__}) -> '{e}'\n")
+            return False
+    else:
+        try:
+            client_socket.sendall(data.encode())
+
+            received_data = client_socket.recv(1024)
+            print(f"length: {len(received_data)}\ndata:\n{received_data.decode()}\n")
+            print(
+                "_________________________________________________________________________________"
+            )
+
+            client_socket.close()
+        except Exception as e:
+            print(f"Exception ({type(e).__name__}) -> '{e}'\n")
+            return False
+
+    if len(received_data) > 0:
+        return True
+
+    return False
+
+
 def make_title(array_input, type):
     result = []
 
@@ -72,6 +134,7 @@ def make_title(array_input, type):
             config = {
                 "id": match.group("id"),
                 "ip": match.group("ip"),
+                "host": match.group("ip"),
                 "port": match.group("port"),
                 "params": match.group("params"),
                 "channel": match.group("channel"),
@@ -83,11 +146,6 @@ def make_title(array_input, type):
             if config["ip"] == None:
                 continue
 
-            flag = get_country_flag(get_country_from_ip(config["ip"]))
-
-            if is_ipv6(config["ip"]):
-                config["ip"] = f"[{config['ip']}]"
-
             array_params_input = config["params"].split("&")
             dict_params = {}
             try:
@@ -97,6 +155,24 @@ def make_title(array_input, type):
                     dict_params[key] = value
             except:
                 continue
+
+            if (
+                check_connection(
+                    config["host"],
+                    int(config["port"]),
+                    config["host"]
+                    if dict_params.get("security", "none") == "tls"
+                    else dict_params.get("sni", config["host"]),
+                    dict_params.get("security", "none"),
+                )
+                == False
+            ):
+                continue
+
+            flag = get_country_flag(get_country_from_ip(config["ip"]))
+
+            if is_ipv6(config["host"]):
+                config["host"] = f"[{config['host']}]"
 
             config[
                 "params"
@@ -112,7 +188,7 @@ def make_title(array_input, type):
             config["params"] = config["params"].strip("&")
 
             if any(
-                f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                f"vless://{config['id']}@{config['host']}:{config['port']}?{config['params']}"
                 in s
                 for s in result
             ):
@@ -126,7 +202,7 @@ def make_title(array_input, type):
                 config["title"] = f"Vless | @{config['channel']} | {flag}"
 
             result.append(
-                f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"
+                f"vless://{config['id']}@{config['host']}:{config['port']}?{config['params']}#{config['title']}"
             )
 
     else:
