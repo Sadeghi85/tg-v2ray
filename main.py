@@ -28,7 +28,7 @@ array_vmess = []
 array_vless = []
 array_reality = []
 
-with open("v2ray_channels_test.json") as file:
+with open("v2ray_channels.json") as file:
     v2ray_channels = json.load(file)
 
 for channel in v2ray_channels:
@@ -66,7 +66,7 @@ for channel in v2ray_channels:
                         re.sub(r"\s*", "", text_content),
                     )
 
-                    print(text_content + "\n")
+                    # print(text_content + "\n")
 
                     matches_subscribe = re.findall(pattern_subscribe, text_content)
                     matches_ss = re.findall(pattern_ss, text_content)
