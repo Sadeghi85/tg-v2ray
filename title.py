@@ -157,7 +157,7 @@ def make_title(array_input, type):
 
             if (
                 check_connection(
-                    config["host"],
+                    config["ip"],
                     int(config["port"]),
                     (
                         dict_params.get("sni", config["host"])
@@ -174,8 +174,8 @@ def make_title(array_input, type):
 
             flag = get_country_flag(get_country_from_ip(config["ip"]))
 
-            if is_ipv6(config["host"]):
-                config["host"] = f"[{config['host']}]"
+            if is_ipv6(config["ip"]):
+                config["ip"] = f"[{config['ip']}]"
 
             config[
                 "params"
@@ -191,7 +191,7 @@ def make_title(array_input, type):
             config["params"] = config["params"].strip("&")
 
             if any(
-                f"vless://{config['id']}@{config['host']}:{config['port']}?{config['params']}"
+                f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
                 in s
                 for s in result
             ):
@@ -205,7 +205,7 @@ def make_title(array_input, type):
                 config["title"] = f"Vless | @{config['channel']} | {flag}"
 
             result.append(
-                f"vless://{config['id']}@{config['host']}:{config['port']}?{config['params']}#{config['title']}"
+                f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"
             )
 
     else:
