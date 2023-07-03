@@ -155,7 +155,7 @@ def make_title(array_input, type):
             except:
                 continue
 
-            if (
+            """ if (
                 check_connection(
                     config["ip"],
                     int(config["port"]),
@@ -170,7 +170,7 @@ def make_title(array_input, type):
                 )
                 == False
             ):
-                continue
+                continue """
 
             flag = get_country_flag(get_country_from_ip(config["ip"]))
 
