@@ -68,7 +68,7 @@ def check_connection(ip: str, port: int, sni: str, security: str):
         else:
             client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        client_socket.settimeout(5)
+        client_socket.settimeout(1)
         client_socket.connect(server_address)
     except Exception as e:
         print(f"{ip}:{port} not responding -> '{e}'\n")
