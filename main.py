@@ -28,7 +28,7 @@ array_vmess = []
 array_vless = []
 array_reality = []
 
-with open("v2ray_channels_test.json") as file:
+with open("v2ray_channels.json") as file:
     v2ray_channels = json.load(file)
 
 for channel in v2ray_channels:
