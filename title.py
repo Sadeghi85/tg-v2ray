@@ -35,7 +35,7 @@ def get_ip(node):
 
 
 def get_country_flag(country_code):
-    if country_code == None:
+    if country_code is None:
         return html.unescape("&#127988;&#8205;&#9760;&#65039;")
 
     base = 127397  # Base value for regional indicator symbol letters
@@ -54,7 +54,7 @@ def get_country_from_ip(ip):
         return None
 
 
-def check_connection(ip: str, port: int, sni: str, security: str):
+""" def check_connection(ip: str, port: int, sni: str, security: str):
     if is_ipv6(ip):
         server_address = (ip, port, 0, 0)
     else:
@@ -111,7 +111,57 @@ def check_connection(ip: str, port: int, sni: str, security: str):
     if len(received_data) > 0 or not (security == "reality" or security == "tls"):
         return True
 
-    return False
+    return False """
+
+
+""" def check_port(ip, port):
+    for addrinfo in socket.getaddrinfo(ip, port):
+        family, socktype, proto, canonname, sockaddr = addrinfo
+        try:
+            sock = socket.socket(family, socktype, proto)
+        except socket.error as e:
+            sock = None
+            continue
+
+        try:
+            sock.settimeout(5)
+            sock.connect(sockaddr)
+            sock.shutdown(socket.SHUT_RDWR)
+        except socket.error as e:
+            sock.close()
+            sock = None
+            continue
+
+        break
+
+    if sock is None:
+        return False
+
+    sock.close()
+
+    return True """
+
+
+def check_port(ip, port, timeout=5):
+    """
+    Check if a port is open on a given IP address.
+
+    Args:
+    ip (str): The IP address.
+    port (int): The port number.
+    timeout (int, optional): The timeout in seconds. Defaults to 5.
+
+    Returns:
+    bool: True if the port is open, False otherwise.
+    """
+    try:
+        sock = socket.create_connection((ip, port), timeout)
+        sock.close()
+        print("port is open\n")
+        return True
+    except (socket.timeout, ConnectionRefusedError, OSError):
+        print("port is closed\n")
+        return False
 
 
 def make_title(array_input, type):
@@ -127,7 +177,8 @@ def make_title(array_input, type):
 
             match = re.match(pattern, element, flags=re.IGNORECASE)
 
-            if match == None:
+            if match is None:
+                print("no match\n")
                 continue
 
             config = {
@@ -142,17 +193,22 @@ def make_title(array_input, type):
             if not is_valid_ip_address(config["ip"]):
                 config["ip"] = get_ip(config["ip"])
 
-            if config["ip"] == None:
+            if config["ip"] is None:
+                print("no ip\n")
                 continue
 
             array_params_input = config["params"].split("&")
             dict_params = {}
-            try:
-                for pair in array_params_input:
+
+            for pair in array_params_input:
+                try:
                     key, value = pair.split("=")
                     key = re.sub(r"headertype", "headerType", key.lower())
                     dict_params[key] = value
-            except:
+                except:
+                    pass
+
+            if not check_port(config["ip"], int(config["port"])):
                 continue
 
             """ if (

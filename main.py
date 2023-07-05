@@ -61,9 +61,13 @@ for channel in v2ray_channels:
                     text_content = div_message_text.prettify()
 
                     text_content = re.sub(
-                        r"<a[^<>]+>([^<>]+)</a>",
+                        r"<code>([^<>]+)</code>",
                         r"\1",
-                        re.sub(r"\s*", "", text_content),
+                        re.sub(
+                            r"<a[^<>]+>([^<>]+)</a>",
+                            r"\1",
+                            re.sub(r"\s*", "", text_content),
+                        ),
                     )
 
                     # print(text_content + "\n")
