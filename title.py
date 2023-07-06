@@ -267,7 +267,7 @@ def make_title(array_input, type):
                 f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"
             )
     elif type == "ss":
-        pattern = r"ss://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)?"
+        pattern = r"ss://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?#?(?P<channel>(?<=#).*)?"
 
         for element in array_input:
             print(element + "\n")
@@ -275,7 +275,7 @@ def make_title(array_input, type):
             match = re.match(pattern, element, flags=re.IGNORECASE)
 
             if match is None:
-                pattern = r"ss://(?P<id>[^#]+)#?(?P<channel>(?<=#).*)?(?P<ip>(?:))(?P<port>(?:))(?P<params>(?:))"
+                pattern = r"ss://(?P<id>[^#]+)#?(?P<channel>(?<=#).*)?(?P<ip>(?:))(?P<port>(?:))"
 
                 match = re.match(pattern, element, flags=re.IGNORECASE)
 
@@ -287,7 +287,6 @@ def make_title(array_input, type):
                 "id": match.group("id"),
                 "ip": match.group("ip"),
                 "port": match.group("port"),
-                "params": match.group("params"),
                 "channel": match.group("channel"),
             }
 
