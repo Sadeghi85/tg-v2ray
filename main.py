@@ -13,11 +13,11 @@ from title import make_title
 pattern_subscribe = (
     r"(?<!\w)(https?://(?:(?!://)[^\s<>])+?subscribe\?token=(?:(?!://)[^\s<>])+)"
 )
-pattern_ss = r"(?<!\w)(ss://[^\s<>]+)"
-pattern_trojan = r"(?<!\w)(trojan://[^\s<>]+)"
-pattern_vmess = r"(?<!\w)(vmess://[^\s<>]+)"
-pattern_vless = r"(?<!\w)(vless://(?:(?!=reality)[^\s<>])+(?=[\s<>]))"
-pattern_reality = r"(?<!\w)(vless://[^\s<>]+?security=reality[^\s<>]*)"
+pattern_ss = r"(?<!\w)(ss://[^\s<>#]+)"
+pattern_trojan = r"(?<!\w)(trojan://[^\s<>#]+)"
+pattern_vmess = r"(?<!\w)(vmess://[^\s<>#]+)"
+pattern_vless = r"(?<!\w)(vless://(?:(?!=reality)[^\s<>#])+(?=[\s<>#]))"
+pattern_reality = r"(?<!\w)(vless://[^\s<>#]+?security=reality[^\s<>#]*)"
 
 array_subscribe = []
 array_subscribe_decoded = []
@@ -79,14 +79,15 @@ for channel in v2ray_channels:
                     matches_vless = re.findall(pattern_vless, text_content)
                     matches_reality = re.findall(pattern_reality, text_content)
 
-                    for index, element in enumerate(matches_ss):
-                        matches_ss[index] = re.sub(
-                            r"#[^#]+$", "", html.unescape(element)
-                        )
-
                     for index, element in enumerate(matches_vmess):
                         matches_vmess[index] = re.sub(
                             r"#[^#]+$", "", html.unescape(element)
+                        )
+
+                    for index, element in enumerate(matches_ss):
+                        matches_ss[index] = (
+                            re.sub(r"#[^#]+$", "", html.unescape(element))
+                            + f"#{channel}"
                         )
 
                     for index, element in enumerate(matches_trojan):
@@ -157,12 +158,13 @@ array_vmess = list(set(array_vmess))
 array_vless = list(set(array_vless))
 array_reality = list(set(array_reality))
 
-
+array_ss = make_title(array_input=array_ss, type="ss")
 array_trojan = make_title(array_input=array_trojan, type="trojan")
 array_vless = make_title(array_input=array_vless, type="vless")
 array_reality = make_title(array_input=array_reality, type="reality")
 
-array_all = array_ss + array_trojan + array_vmess + array_vless + array_reality
+# array_all = array_ss + array_trojan + array_vmess + array_vless + array_reality
+array_all = array_ss + array_trojan + array_vless + array_reality
 
 with open("./generated/subs/all", "w", encoding="utf-8") as file:
     file.write(base64.b64encode("\n".join(array_all).encode("utf-8")).decode("utf-8"))

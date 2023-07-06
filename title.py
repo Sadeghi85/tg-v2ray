@@ -7,6 +7,18 @@ import json
 import html
 import random
 import tldextract
+import base64
+
+
+def is_valid_base64(s):
+    try:
+        # Decode the string using base64
+        b = base64.b64decode(s)
+        # Encode the decoded bytes back to base64 and compare to the original string
+        return base64.b64encode(b).decode("utf-8") == s
+    except:
+        # If an exception is raised during decoding, the string is not valid base64
+        return False
 
 
 def is_valid_domain(hostname):
@@ -253,6 +265,87 @@ def make_title(array_input, type):
 
             result.append(
                 f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"
+            )
+    elif type == "ss":
+        pattern = r"ss://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)?"
+
+        for element in array_input:
+            print(element + "\n")
+
+            match = re.match(pattern, element, flags=re.IGNORECASE)
+
+            if match is None:
+                pattern = r"ss://(?P<id>[^#]+)#?(?P<channel>(?<=#).*)?(?P<ip>(?:))(?P<port>(?:))(?P<params>(?:))"
+
+                match = re.match(pattern, element, flags=re.IGNORECASE)
+
+                if match is None:
+                    print("no match\n")
+                    continue
+
+            config = {
+                "id": match.group("id"),
+                "ip": match.group("ip"),
+                "port": match.group("port"),
+                "params": match.group("params"),
+                "channel": match.group("channel"),
+            }
+
+            config["id"] += "=" * ((4 - len(config["id"]) % 4) % 4)
+
+            if not is_valid_base64(config["id"]):
+                print(f"invalid base64 string: {config['id']}\n")
+                continue
+
+            if config["ip"] == "":
+                pattern = (
+                    r"(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)"
+                )
+
+                match = re.match(
+                    pattern,
+                    base64.b64decode(config["id"]).decode("utf-8"),
+                    flags=re.IGNORECASE,
+                )
+
+                if match is None:
+                    print("no match\n")
+                    continue
+
+                config = {
+                    "id": base64.b64encode(match.group("id").encode("utf-8")).decode(
+                        "utf-8"
+                    ),
+                    "ip": match.group("ip"),
+                    "port": match.group("port"),
+                    "channel": config["channel"],
+                }
+
+            if not is_valid_ip_address(config["ip"]):
+                config["ip"] = get_ip(config["ip"])
+
+            if config["ip"] is None:
+                print("no ip\n")
+                continue
+
+            if not check_port(config["ip"], int(config["port"])):
+                continue
+
+            flag = get_country_flag(get_country_from_ip(config["ip"]))
+
+            if is_ipv6(config["ip"]):
+                config["ip"] = f"[{config['ip']}]"
+
+            if any(
+                f"ss://{config['id']}@{config['ip']}:{config['port']}" in s
+                for s in result
+            ):
+                continue
+
+            config["title"] = f"ShadowSocks | @{config['channel']} | {flag}"
+
+            result.append(
+                f"ss://{config['id']}@{config['ip']}:{config['port']}#{config['title']}"
             )
     else:
         result = array_input
