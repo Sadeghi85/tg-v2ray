@@ -83,14 +83,16 @@ for channel in v2ray_channels:
                         matches_ss[index] = re.sub(
                             r"#[^#]+$", "", html.unescape(element)
                         )
-                    for index, element in enumerate(matches_trojan):
-                        matches_trojan[index] = re.sub(
-                            r"#[^#]+$", "", html.unescape(element)
-                        )
 
                     for index, element in enumerate(matches_vmess):
                         matches_vmess[index] = re.sub(
                             r"#[^#]+$", "", html.unescape(element)
+                        )
+
+                    for index, element in enumerate(matches_trojan):
+                        matches_trojan[index] = (
+                            re.sub(r"#[^#]+$", "", html.unescape(element))
+                            + f"#{channel}"
                         )
 
                     for index, element in enumerate(matches_vless):
@@ -155,6 +157,8 @@ array_vmess = list(set(array_vmess))
 array_vless = list(set(array_vless))
 array_reality = list(set(array_reality))
 
+
+array_trojan = make_title(array_input=array_trojan, type="trojan")
 array_vless = make_title(array_input=array_vless, type="vless")
 array_reality = make_title(array_input=array_reality, type="reality")
 

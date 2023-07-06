@@ -6,6 +6,14 @@ import requests
 import json
 import html
 import random
+import tldextract
+
+
+def is_valid_domain(hostname):
+    # Extract the TLD, domain, and subdomain from the hostname
+    ext = tldextract.extract(hostname)
+    # Check if the domain and TLD are not empty
+    return ext.domain != "" and ext.suffix != ""
 
 
 def is_valid_ip_address(ip):
@@ -54,94 +62,6 @@ def get_country_from_ip(ip):
         return None
 
 
-""" def check_connection(ip: str, port: int, sni: str, security: str):
-    if is_ipv6(ip):
-        server_address = (ip, port, 0, 0)
-    else:
-        server_address = (ip, port)
-
-    print(f"{ip}:{port}->{sni}\n")
-
-    try:
-        if is_ipv6(ip):
-            client_socket = socket.socket(socket.AF_INET6, socket.SOCK_STREAM, 0)
-        else:
-            client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        client_socket.settimeout(1)
-        client_socket.connect(server_address)
-    except Exception as e:
-        print(f"{ip}:{port} not responding -> '{e}'\n")
-        return False
-
-    data = "Hello, server!"
-    received_data = ""
-
-    if security == "reality" or security == "tls":
-        try:
-            ssl_context = ssl.create_default_context()
-            ssl_socket = ssl_context.wrap_socket(client_socket, server_hostname=sni)
-
-            ssl_socket.sendall(data.encode())
-
-            received_data = ssl_socket.recv(1024)
-            print(f"length: {len(received_data)}\n")
-            # print(f"data:\n{received_data.decode()}\n")
-
-            ssl_socket.close()
-        except ssl.SSLCertVerificationError:
-            return True
-        except Exception as e:
-            print(f"Exception ({type(e).__name__}) -> '{e}'\n")
-            return False
-    else:
-        try:
-            client_socket.sendall(data.encode())
-
-            received_data = client_socket.recv(1024)
-            print(f"length: {len(received_data)}\n")
-            # print(f"data:\n{received_data.decode()}\n")
-
-            client_socket.close()
-
-        except Exception as e:
-            print(f"Exception ({type(e).__name__}) -> '{e}'\n")
-            return False
-
-    if len(received_data) > 0 or not (security == "reality" or security == "tls"):
-        return True
-
-    return False """
-
-
-""" def check_port(ip, port):
-    for addrinfo in socket.getaddrinfo(ip, port):
-        family, socktype, proto, canonname, sockaddr = addrinfo
-        try:
-            sock = socket.socket(family, socktype, proto)
-        except socket.error as e:
-            sock = None
-            continue
-
-        try:
-            sock.settimeout(5)
-            sock.connect(sockaddr)
-            sock.shutdown(socket.SHUT_RDWR)
-        except socket.error as e:
-            sock.close()
-            sock = None
-            continue
-
-        break
-
-    if sock is None:
-        return False
-
-    sock.close()
-
-    return True """
-
-
 def check_port(ip, port, timeout=5):
     """
     Check if a port is open on a given IP address.
@@ -170,7 +90,7 @@ def make_title(array_input, type):
     random.shuffle(array_input)
 
     if type == "reality" or type == "vless":
-        pattern = r"vless://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)"
+        pattern = r"vless://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)?"
 
         for element in array_input:
             print(element + "\n")
@@ -203,7 +123,11 @@ def make_title(array_input, type):
             for pair in array_params_input:
                 try:
                     key, value = pair.split("=")
-                    key = re.sub(r"headertype", "headerType", key.lower())
+                    key = re.sub(
+                        r"headertype",
+                        "headerType",
+                        re.sub(r"allowinsecure", "allowInsecure", key.lower()),
+                    )
                     dict_params[key] = value
                 except:
                     pass
@@ -211,31 +135,18 @@ def make_title(array_input, type):
             if not check_port(config["ip"], int(config["port"])):
                 continue
 
-            """ if (
-                check_connection(
-                    config["ip"],
-                    int(config["port"]),
-                    (
-                        dict_params.get("sni", config["host"])
-                        if is_valid_ip_address(config["host"])
-                        else config["host"]
-                    )
-                    if dict_params.get("security", "none") == "tls"
-                    else dict_params.get("sni", config["host"]),
-                    dict_params.get("security", "none"),
-                )
-                == False
-            ):
-                continue """
-
             flag = get_country_flag(get_country_from_ip(config["ip"]))
 
             if is_ipv6(config["ip"]):
                 config["ip"] = f"[{config['ip']}]"
 
+            if dict_params.get("sni", "") == "" and is_valid_domain(config["host"]):
+                dict_params["sni"] = config["host"]
+                dict_params["allowInsecure"] = 1
+
             config[
                 "params"
-            ] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&alpn={dict_params.get('alpn', '')}&"
+            ] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&alpn={dict_params.get('alpn', '')}&allowInsecure={dict_params.get('allowInsecure', '')}&"
 
             config["params"] = re.sub(r"\w+=&", "", config["params"])
             config["params"] = re.sub(
@@ -263,7 +174,86 @@ def make_title(array_input, type):
             result.append(
                 f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"
             )
+    elif type == "trojan":
+        pattern = r"trojan://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)?"
 
+        for element in array_input:
+            print(element + "\n")
+
+            match = re.match(pattern, element, flags=re.IGNORECASE)
+
+            if match is None:
+                print("no match\n")
+                continue
+
+            config = {
+                "id": match.group("id"),
+                "ip": match.group("ip"),
+                "host": match.group("ip"),
+                "port": match.group("port"),
+                "params": match.group("params"),
+                "channel": match.group("channel"),
+            }
+
+            if not is_valid_ip_address(config["ip"]):
+                config["ip"] = get_ip(config["ip"])
+
+            if config["ip"] is None:
+                print("no ip\n")
+                continue
+
+            array_params_input = config["params"].split("&")
+            dict_params = {}
+
+            for pair in array_params_input:
+                try:
+                    key, value = pair.split("=")
+                    key = re.sub(
+                        r"headertype",
+                        "headerType",
+                        re.sub(r"allowinsecure", "allowInsecure", key.lower()),
+                    )
+                    dict_params[key] = value
+                except:
+                    pass
+
+            if not check_port(config["ip"], int(config["port"])):
+                continue
+
+            flag = get_country_flag(get_country_from_ip(config["ip"]))
+
+            if is_ipv6(config["ip"]):
+                config["ip"] = f"[{config['ip']}]"
+
+            if dict_params.get("sni", "") == "" and is_valid_domain(config["host"]):
+                dict_params["sni"] = config["host"]
+                dict_params["allowInsecure"] = 1
+
+            config[
+                "params"
+            ] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&alpn={dict_params.get('alpn', '')}&allowInsecure={dict_params.get('allowInsecure', '')}&"
+
+            config["params"] = re.sub(r"\w+=&", "", config["params"])
+            config["params"] = re.sub(
+                r"(?:encryption=none&)|(?:headerType=none&)",
+                "",
+                config["params"],
+                flags=re.IGNORECASE,
+            )
+            config["params"] = config["params"].strip("&")
+
+            if any(
+                f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                in s
+                for s in result
+            ):
+                continue
+
+            config["title"] = f"Trojan | @{config['channel']} | {flag}"
+
+            result.append(
+                f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"
+            )
     else:
         result = array_input
 
