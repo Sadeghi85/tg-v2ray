@@ -102,9 +102,9 @@ def make_title(array_input, type):
     random.shuffle(array_input)
 
     if type == "reality" or type == "vless":
-        pattern = r"vless://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)?"
-
         for element in array_input:
+            pattern = r"vless://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)?"
+
             print(element + "\n")
 
             match = re.match(pattern, element, flags=re.IGNORECASE)
@@ -187,9 +187,9 @@ def make_title(array_input, type):
                 f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"
             )
     elif type == "trojan":
-        pattern = r"trojan://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)?"
-
         for element in array_input:
+            pattern = r"trojan://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)?"
+
             print(element + "\n")
 
             match = re.match(pattern, element, flags=re.IGNORECASE)
@@ -267,9 +267,9 @@ def make_title(array_input, type):
                 f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"
             )
     elif type == "ss":
-        pattern = r"ss://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?#?(?P<channel>(?<=#).*)?"
-
         for element in array_input:
+            pattern = r"ss://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?#?(?P<channel>(?<=#).*)?"
+
             print(element + "\n")
 
             match = re.match(pattern, element, flags=re.IGNORECASE)
