@@ -74,7 +74,7 @@ def get_country_from_ip(ip):
         return None
 
 
-def check_port(ip, port, timeout=5):
+def check_port(ip, port, timeout=1):
     """
     Check if a port is open on a given IP address.
 
