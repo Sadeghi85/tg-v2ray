@@ -7,6 +7,7 @@ import base64
 from urllib.parse import urlparse
 import html
 import traceback
+import random
 from title import make_title
 
 
@@ -150,6 +151,50 @@ for subscribe in array_subscribe:
         print("An exception occurred:", e)
         traceback.print_exc()
 
+try:
+    text_content = "\n".join(array_subscribe_decoded)
+
+    matches_ss = re.findall(pattern_ss, text_content)
+    matches_trojan = re.findall(pattern_trojan, text_content)
+    # matches_vmess = re.findall(pattern_vmess, text_content)
+    matches_vless = re.findall(pattern_vless, text_content)
+    matches_reality = re.findall(pattern_reality, text_content)
+
+    """ for index, element in enumerate(matches_vmess):
+        matches_vmess[index] = re.sub(
+            r"#[^#]+$", "", html.unescape(element)
+        ) """
+
+    for index, element in enumerate(matches_ss):
+        matches_ss[index] = (
+            re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#Subscribe"
+        )
+
+    for index, element in enumerate(matches_trojan):
+        matches_trojan[index] = (
+            re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#Subscribe"
+        )
+
+    for index, element in enumerate(matches_vless):
+        matches_vless[index] = (
+            re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#Subscribe"
+        )
+
+    for index, element in enumerate(matches_reality):
+        matches_reality[index] = (
+            re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#Subscribe"
+        )
+
+    array_subscribe.extend(matches_subscribe)
+    array_ss.extend(matches_ss)
+    array_trojan.extend(matches_trojan)
+    array_vmess.extend(matches_vmess)
+    array_vless.extend(matches_vless)
+    array_reality.extend(matches_reality)
+
+except Exception as e:
+    print("An exception occurred:", e)
+    traceback.print_exc()
 
 array_subscribe_decoded = list(set(array_subscribe_decoded))
 array_ss = list(set(array_ss))
@@ -165,6 +210,25 @@ array_reality = make_title(array_input=array_reality, type="reality")
 
 # array_all = array_ss + array_trojan + array_vmess + array_vless + array_reality
 array_all = array_ss + array_trojan + array_vless + array_reality
+
+random.shuffle(array_all)
+
+chunk_size = 100  # maximum size of each chunk
+chunks = []
+
+for i in range(0, len(array_all), chunk_size):
+    chunk = array_all[i : i + chunk_size]
+    chunks.append(chunk)
+
+for i in range(0, 10, 1):
+    if i < len(chunks):
+        with open(f"./generated/subs/all-{i+1}", "w", encoding="utf-8") as file:
+            file.write(
+                base64.b64encode("\n".join(chunks[i]).encode("utf-8")).decode("utf-8")
+            )
+    else:
+        with open(f"./generated/subs/all-{i+1}", "w", encoding="utf-8") as file:
+            file.write("")
 
 with open("./generated/subs/all", "w", encoding="utf-8") as file:
     file.write(base64.b64encode("\n".join(array_all).encode("utf-8")).decode("utf-8"))

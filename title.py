@@ -136,9 +136,13 @@ def make_title(array_input, type):
                 try:
                     key, value = pair.split("=")
                     key = re.sub(
-                        r"headertype",
-                        "headerType",
-                        re.sub(r"allowinsecure", "allowInsecure", key.lower()),
+                        r"servicename",
+                        "serviceName",
+                        re.sub(
+                            r"headertype",
+                            "headerType",
+                            re.sub(r"allowinsecure", "allowInsecure", key.lower()),
+                        ),
                     )
                     dict_params[key] = value
                 except:
@@ -158,7 +162,7 @@ def make_title(array_input, type):
 
             config[
                 "params"
-            ] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&alpn={dict_params.get('alpn', '')}&allowInsecure={dict_params.get('allowInsecure', '')}&"
+            ] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&serviceName={dict_params.get('serviceName', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&alpn={dict_params.get('alpn', '')}&allowInsecure={dict_params.get('allowInsecure', '')}&"
 
             config["params"] = re.sub(r"\w+=&", "", config["params"])
             config["params"] = re.sub(
@@ -221,9 +225,13 @@ def make_title(array_input, type):
                 try:
                     key, value = pair.split("=")
                     key = re.sub(
-                        r"headertype",
-                        "headerType",
-                        re.sub(r"allowinsecure", "allowInsecure", key.lower()),
+                        r"servicename",
+                        "serviceName",
+                        re.sub(
+                            r"headertype",
+                            "headerType",
+                            re.sub(r"allowinsecure", "allowInsecure", key.lower()),
+                        ),
                     )
                     dict_params[key] = value
                 except:
@@ -243,7 +251,7 @@ def make_title(array_input, type):
 
             config[
                 "params"
-            ] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&alpn={dict_params.get('alpn', '')}&allowInsecure={dict_params.get('allowInsecure', '')}&"
+            ] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&serviceName={dict_params.get('serviceName', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&alpn={dict_params.get('alpn', '')}&allowInsecure={dict_params.get('allowInsecure', '')}&"
 
             config["params"] = re.sub(r"\w+=&", "", config["params"])
             config["params"] = re.sub(
