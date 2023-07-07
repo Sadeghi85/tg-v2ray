@@ -91,7 +91,7 @@ def check_port(ip, port, timeout=5):
         sock.close()
         print("port is open\n")
         return True
-    except (socket.timeout, ConnectionRefusedError, OSError):
+    except:
         print("port is closed\n")
         return False
 
@@ -188,7 +188,7 @@ def make_title(array_input, type):
             )
     elif type == "trojan":
         for element in array_input:
-            pattern = r"trojan://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)?"
+            pattern = r"trojan://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\??(?P<params>[^#]+)?#?(?P<channel>(?<=#).*)?"
 
             print(element + "\n")
 
