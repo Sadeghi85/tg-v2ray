@@ -203,7 +203,7 @@ def make_title(array_input, type):
                 "ip": match.group("ip"),
                 "host": match.group("ip"),
                 "port": match.group("port"),
-                "params": match.group("params"),
+                "params": match.group("params") or "",
                 "channel": match.group("channel"),
             }
 
