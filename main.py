@@ -54,7 +54,8 @@ for channel in v2ray_channels:
 
                 datetime_object = datetime.fromisoformat(datetime_attribute)
 
-                if datetime.now(timezone.utc) - datetime_object < timedelta(days=2):
+                # if datetime.now(timezone.utc) - datetime_object < timedelta(days=2):
+                if True:
                     div_message_text = div_message.find(
                         "div", class_="tgme_widget_message_text"
                     )
