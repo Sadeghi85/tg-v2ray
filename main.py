@@ -186,7 +186,6 @@ try:
             re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#Subscribe"
         )
 
-    array_subscribe.extend(matches_subscribe)
     array_ss.extend(matches_ss)
     array_trojan.extend(matches_trojan)
     array_vmess.extend(matches_vmess)
