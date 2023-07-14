@@ -131,13 +131,14 @@ for channel in v2ray_channels:
 
 for subscribe in array_subscribe:
     try:
-        response = requests.get(subscribe)
+        response = requests.get(url=subscribe, timeout=5)
         text_content = response.text
 
-        parsed_url = urlparse(subscribe)
-        hostname = parsed_url.hostname
+        # parsed_url = urlparse(subscribe)
+        # hostname = parsed_url.hostname
 
         try:
+            text_content += "=" * ((4 - len(text_content) % 4) % 4)
             decoded = base64.b64decode(text_content).decode("utf-8")
 
             matches_subscribe_decoded = decoded.splitlines()
