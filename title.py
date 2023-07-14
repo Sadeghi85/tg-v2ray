@@ -156,7 +156,7 @@ def make_title(array_input, type):
             if is_ipv6(config["ip"]):
                 config["ip"] = f"[{config['ip']}]"
 
-            if dict_params.get("sni", "") == "" and is_valid_domain(config["host"]):
+            if dict_params.get("sni", "-") == "" and is_valid_domain(config["host"]):
                 dict_params["sni"] = config["host"]
                 dict_params["allowInsecure"] = 1
 
@@ -245,7 +245,7 @@ def make_title(array_input, type):
             if is_ipv6(config["ip"]):
                 config["ip"] = f"[{config['ip']}]"
 
-            if dict_params.get("sni", "") == "" and is_valid_domain(config["host"]):
+            if dict_params.get("sni", "-") == "" and is_valid_domain(config["host"]):
                 dict_params["sni"] = config["host"]
                 dict_params["allowInsecure"] = 1
 
