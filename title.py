@@ -47,6 +47,21 @@ def is_ipv6(ip):
         return False
 
 
+def get_ips(node):
+    try:
+        results = socket.getaddrinfo(node, None, socket.AF_UNSPEC)
+
+        ips = set()
+
+        for result in results:
+            ip = result[4][0]
+            ips.add(ip)
+
+        return ips
+    except:
+        return None
+
+
 def get_ip(node):
     try:
         return socket.gethostbyname(node)
@@ -122,10 +137,18 @@ def make_title(array_input, type):
                 "channel": match.group("channel"),
             }
 
-            if not is_valid_ip_address(config["ip"]):
+            """ if not is_valid_ip_address(config["ip"]):
                 config["ip"] = get_ip(config["ip"])
 
             if config["ip"] is None:
+                print("no ip\n")
+                continue """
+
+            ips = {config["ip"]}
+            if not is_valid_ip_address(config["ip"]):
+                ips = get_ips(config["ip"])
+
+            if ips is None:
                 print("no ip\n")
                 continue
 
@@ -148,52 +171,55 @@ def make_title(array_input, type):
                 except:
                     pass
 
-            if not check_port(config["ip"], int(config["port"])):
-                continue
+            for ip in ips:
+                config["ip"] = ip
 
-            flag = get_country_flag(get_country_from_ip(config["ip"]))
+                if not check_port(config["ip"], int(config["port"])):
+                    continue
 
-            if is_ipv6(config["ip"]):
-                config["ip"] = f"[{config['ip']}]"
+                flag = get_country_flag(get_country_from_ip(config["ip"]))
 
-            if (
-                dict_params.get("security", "") in ["reality", "tls"]
-                and dict_params.get("sni", "") == ""
-                and is_valid_domain(config["host"])
-            ):
-                dict_params["sni"] = config["host"]
-                dict_params["allowInsecure"] = 1
+                if is_ipv6(config["ip"]):
+                    config["ip"] = f"[{config['ip']}]"
 
-            config[
-                "params"
-            ] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&serviceName={dict_params.get('serviceName', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&alpn={dict_params.get('alpn', '')}&allowInsecure={dict_params.get('allowInsecure', '')}&"
+                if (
+                    dict_params.get("security", "") in ["reality", "tls"]
+                    and dict_params.get("sni", "") == ""
+                    and is_valid_domain(config["host"])
+                ):
+                    dict_params["sni"] = config["host"]
+                    dict_params["allowInsecure"] = 1
 
-            config["params"] = re.sub(r"\w+=&", "", config["params"])
-            config["params"] = re.sub(
-                r"(?:encryption=none&)|(?:headerType=none&)",
-                "",
-                config["params"],
-                flags=re.IGNORECASE,
-            )
-            config["params"] = config["params"].strip("&")
-
-            if any(
-                f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
-                in s
-                for s in result
-            ):
-                continue
-
-            if type == "reality":
                 config[
-                    "title"
-                ] = f"Reality | {dict_params.get('sni', '')} | @{config['channel']} | {flag}"
-            else:
-                config["title"] = f"Vless | @{config['channel']} | {flag}"
+                    "params"
+                ] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&serviceName={dict_params.get('serviceName', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&alpn={dict_params.get('alpn', '')}&allowInsecure={dict_params.get('allowInsecure', '')}&"
 
-            result.append(
-                f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"
-            )
+                config["params"] = re.sub(r"\w+=&", "", config["params"])
+                config["params"] = re.sub(
+                    r"(?:encryption=none&)|(?:headerType=none&)",
+                    "",
+                    config["params"],
+                    flags=re.IGNORECASE,
+                )
+                config["params"] = config["params"].strip("&")
+
+                if any(
+                    f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                    in s
+                    for s in result
+                ):
+                    continue
+
+                if type == "reality":
+                    config[
+                        "title"
+                    ] = f"Reality | {dict_params.get('sni', '')} | @{config['channel']} | {flag}"
+                else:
+                    config["title"] = f"Vless | @{config['channel']} | {flag}"
+
+                result.append(
+                    f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"
+                )
     elif type == "trojan":
         for element in array_input:
             pattern = r"trojan://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\??(?P<params>[^#]+)?#?(?P<channel>(?<=#).*)?"
@@ -215,10 +241,18 @@ def make_title(array_input, type):
                 "channel": match.group("channel"),
             }
 
-            if not is_valid_ip_address(config["ip"]):
+            """ if not is_valid_ip_address(config["ip"]):
                 config["ip"] = get_ip(config["ip"])
 
             if config["ip"] is None:
+                print("no ip\n")
+                continue """
+
+            ips = {config["ip"]}
+            if not is_valid_ip_address(config["ip"]):
+                ips = get_ips(config["ip"])
+
+            if ips is None:
                 print("no ip\n")
                 continue
 
@@ -241,47 +275,50 @@ def make_title(array_input, type):
                 except:
                     pass
 
-            if not check_port(config["ip"], int(config["port"])):
-                continue
+            for ip in ips:
+                config["ip"] = ip
 
-            flag = get_country_flag(get_country_from_ip(config["ip"]))
+                if not check_port(config["ip"], int(config["port"])):
+                    continue
 
-            if is_ipv6(config["ip"]):
-                config["ip"] = f"[{config['ip']}]"
+                flag = get_country_flag(get_country_from_ip(config["ip"]))
 
-            if (
-                dict_params.get("security", "") in ["reality", "tls"]
-                and dict_params.get("sni", "") == ""
-                and is_valid_domain(config["host"])
-            ):
-                dict_params["sni"] = config["host"]
-                dict_params["allowInsecure"] = 1
+                if is_ipv6(config["ip"]):
+                    config["ip"] = f"[{config['ip']}]"
 
-            config[
-                "params"
-            ] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&serviceName={dict_params.get('serviceName', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&alpn={dict_params.get('alpn', '')}&allowInsecure={dict_params.get('allowInsecure', '')}&"
+                if (
+                    dict_params.get("security", "") in ["reality", "tls"]
+                    and dict_params.get("sni", "") == ""
+                    and is_valid_domain(config["host"])
+                ):
+                    dict_params["sni"] = config["host"]
+                    dict_params["allowInsecure"] = 1
 
-            config["params"] = re.sub(r"\w+=&", "", config["params"])
-            config["params"] = re.sub(
-                r"(?:encryption=none&)|(?:headerType=none&)",
-                "",
-                config["params"],
-                flags=re.IGNORECASE,
-            )
-            config["params"] = config["params"].strip("&")
+                config[
+                    "params"
+                ] = f"security={dict_params.get('security', '')}&flow={dict_params.get('flow', '')}&sni={dict_params.get('sni', '')}&encryption={dict_params.get('encryption', '')}&type={dict_params.get('type', '')}&serviceName={dict_params.get('serviceName', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&headerType={dict_params.get('headerType', '')}&fp={dict_params.get('fp', '')}&pbk={dict_params.get('pbk', '')}&sid={dict_params.get('sid', '')}&alpn={dict_params.get('alpn', '')}&allowInsecure={dict_params.get('allowInsecure', '')}&"
 
-            if any(
-                f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
-                in s
-                for s in result
-            ):
-                continue
+                config["params"] = re.sub(r"\w+=&", "", config["params"])
+                config["params"] = re.sub(
+                    r"(?:encryption=none&)|(?:headerType=none&)",
+                    "",
+                    config["params"],
+                    flags=re.IGNORECASE,
+                )
+                config["params"] = config["params"].strip("&")
 
-            config["title"] = f"Trojan | @{config['channel']} | {flag}"
+                if any(
+                    f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                    in s
+                    for s in result
+                ):
+                    continue
 
-            result.append(
-                f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"
-            )
+                config["title"] = f"Trojan | @{config['channel']} | {flag}"
+
+                result.append(
+                    f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"
+                )
     elif type == "ss":
         for element in array_input:
             pattern = r"ss://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?#?(?P<channel>(?<=#).*)?"
@@ -336,32 +373,43 @@ def make_title(array_input, type):
                     "channel": config["channel"],
                 }
 
-            if not is_valid_ip_address(config["ip"]):
+            """ if not is_valid_ip_address(config["ip"]):
                 config["ip"] = get_ip(config["ip"])
 
             if config["ip"] is None:
                 print("no ip\n")
+                continue """
+
+            ips = {config["ip"]}
+            if not is_valid_ip_address(config["ip"]):
+                ips = get_ips(config["ip"])
+
+            if ips is None:
+                print("no ip\n")
                 continue
 
-            if not check_port(config["ip"], int(config["port"])):
-                continue
+            for ip in ips:
+                config["ip"] = ip
 
-            flag = get_country_flag(get_country_from_ip(config["ip"]))
+                if not check_port(config["ip"], int(config["port"])):
+                    continue
 
-            if is_ipv6(config["ip"]):
-                config["ip"] = f"[{config['ip']}]"
+                flag = get_country_flag(get_country_from_ip(config["ip"]))
 
-            if any(
-                f"ss://{config['id']}@{config['ip']}:{config['port']}" in s
-                for s in result
-            ):
-                continue
+                if is_ipv6(config["ip"]):
+                    config["ip"] = f"[{config['ip']}]"
 
-            config["title"] = f"ShadowSocks | @{config['channel']} | {flag}"
+                if any(
+                    f"ss://{config['id']}@{config['ip']}:{config['port']}" in s
+                    for s in result
+                ):
+                    continue
 
-            result.append(
-                f"ss://{config['id']}@{config['ip']}:{config['port']}#{config['title']}"
-            )
+                config["title"] = f"ShadowSocks | @{config['channel']} | {flag}"
+
+                result.append(
+                    f"ss://{config['id']}@{config['ip']}:{config['port']}#{config['title']}"
+                )
     else:
         result = array_input
 

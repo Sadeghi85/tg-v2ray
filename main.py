@@ -131,11 +131,8 @@ for channel in v2ray_channels:
 
 for subscribe in array_subscribe:
     try:
-        response = requests.get(url=subscribe, timeout=5)
+        response = requests.get(url=subscribe, timeout=1)
         text_content = response.text
-
-        # parsed_url = urlparse(subscribe)
-        # hostname = parsed_url.hostname
 
         try:
             text_content += "=" * ((4 - len(text_content) % 4) % 4)
@@ -149,6 +146,7 @@ for subscribe in array_subscribe:
             array_subscribe_decoded.extend(matches_subscribe_decoded)
         except Exception as e:
             print("An exception occurred:", e)
+            traceback.print_exc()
     except Exception as e:
         print("An exception occurred:", e)
         traceback.print_exc()
