@@ -146,13 +146,6 @@ def make_title(array_input, type):
                 "channel": match.group("channel"),
             }
 
-            """ if not is_valid_ip_address(config["ip"]):
-                config["ip"] = get_ip(config["ip"])
-
-            if config["ip"] is None:
-                print("no ip\n")
-                continue """
-
             ips = {config["ip"]}
             if not is_valid_ip_address(config["ip"]):
                 ips = get_ips(config["ip"])
@@ -183,8 +176,8 @@ def make_title(array_input, type):
             for ip in ips:
                 config["ip"] = ip
 
-                # if not check_port(config["ip"], int(config["port"])):
-                #     continue
+                if not check_port(config["ip"], int(config["port"])):
+                    continue
 
                 flag = get_country_flag(get_country_from_ip(config["ip"]))
 
@@ -250,13 +243,6 @@ def make_title(array_input, type):
                 "channel": match.group("channel"),
             }
 
-            """ if not is_valid_ip_address(config["ip"]):
-                config["ip"] = get_ip(config["ip"])
-
-            if config["ip"] is None:
-                print("no ip\n")
-                continue """
-
             ips = {config["ip"]}
             if not is_valid_ip_address(config["ip"]):
                 ips = get_ips(config["ip"])
@@ -287,8 +273,8 @@ def make_title(array_input, type):
             for ip in ips:
                 config["ip"] = ip
 
-                # if not check_port(config["ip"], int(config["port"])):
-                #     continue
+                if not check_port(config["ip"], int(config["port"])):
+                    continue
 
                 flag = get_country_flag(get_country_from_ip(config["ip"]))
 
@@ -382,13 +368,6 @@ def make_title(array_input, type):
                     "channel": config["channel"],
                 }
 
-            """ if not is_valid_ip_address(config["ip"]):
-                config["ip"] = get_ip(config["ip"])
-
-            if config["ip"] is None:
-                print("no ip\n")
-                continue """
-
             ips = {config["ip"]}
             if not is_valid_ip_address(config["ip"]):
                 ips = get_ips(config["ip"])
@@ -400,8 +379,8 @@ def make_title(array_input, type):
             for ip in ips:
                 config["ip"] = ip
 
-                # if not check_port(config["ip"], int(config["port"])):
-                #     continue
+                if not check_port(config["ip"], int(config["port"])):
+                    continue
 
                 flag = get_country_flag(get_country_from_ip(config["ip"]))
 
