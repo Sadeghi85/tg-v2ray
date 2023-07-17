@@ -42,6 +42,8 @@ for channel in v2ray_channels:
 
         div_messages = soup.find_all("div", class_="tgme_widget_message")
 
+        text_messages = []
+
         for div_message in div_messages:
             try:
                 div_message_info = div_message.find(
@@ -50,86 +52,105 @@ for channel in v2ray_channels:
                 time_tag = div_message_info.find("time")
                 datetime_attribute = time_tag["datetime"]
 
-                print(datetime_attribute + "\n")
-
                 datetime_object = datetime.fromisoformat(datetime_attribute)
 
-                # if datetime.now(timezone.utc) - datetime_object < timedelta(days=2):
-                if True:
-                    div_message_text = div_message.find(
-                        "div", class_="tgme_widget_message_text"
-                    )
+                div_message_text = div_message.find(
+                    "div", class_="tgme_widget_message_text"
+                )
 
-                    text_content = div_message_text.prettify()
+                text_content = div_message_text.prettify()
 
-                    text_content = re.sub(
-                        r"<code>([^<>]+)</code>",
-                        r"\1",
-                        re.sub(
-                            r"<a[^<>]+>([^<>]+)</a>",
-                            r"\1",
-                            re.sub(r"\s*", "", text_content),
-                        ),
-                    )
-
-                    # print(text_content + "\n")
-
-                    matches_subscribe = re.findall(pattern_subscribe, text_content)
-                    matches_ss = re.findall(pattern_ss, text_content)
-                    matches_trojan = re.findall(pattern_trojan, text_content)
-                    matches_vmess = re.findall(pattern_vmess, text_content)
-                    matches_vless = re.findall(pattern_vless, text_content)
-                    matches_reality = re.findall(pattern_reality, text_content)
-
-                    for index, element in enumerate(matches_vmess):
-                        matches_vmess[index] = re.sub(
-                            r"#[^#]+$", "", html.unescape(element)
-                        )
-
-                    for index, element in enumerate(matches_ss):
-                        matches_ss[index] = (
-                            re.sub(r"#[^#]+$", "", html.unescape(element))
-                            + f"#{channel}"
-                        )
-
-                    for index, element in enumerate(matches_trojan):
-                        matches_trojan[index] = (
-                            re.sub(r"#[^#]+$", "", html.unescape(element))
-                            + f"#{channel}"
-                        )
-
-                    for index, element in enumerate(matches_vless):
-                        matches_vless[index] = (
-                            re.sub(r"#[^#]+$", "", html.unescape(element))
-                            + f"#{channel}"
-                        )
-
-                    for index, element in enumerate(matches_reality):
-                        matches_reality[index] = (
-                            re.sub(r"#[^#]+$", "", html.unescape(element))
-                            + f"#{channel}"
-                        )
-
-                    matches_subscribe = [x for x in matches_subscribe if "…" not in x]
-                    matches_ss = [x for x in matches_ss if "…" not in x]
-                    matches_trojan = [x for x in matches_trojan if "…" not in x]
-                    matches_vmess = [x for x in matches_vmess if "…" not in x]
-                    matches_vless = [x for x in matches_vless if "…" not in x]
-                    matches_reality = [x for x in matches_reality if "…" not in x]
-
-                    array_subscribe.extend(matches_subscribe)
-                    array_ss.extend(matches_ss)
-                    array_trojan.extend(matches_trojan)
-                    array_vmess.extend(matches_vmess)
-                    array_vless.extend(matches_vless)
-                    array_reality.extend(matches_reality)
+                message_dict = {"text": text_content, "date": datetime_object}
+                text_messages.append(message_dict)
             except:
                 pass
+
+        text_messages = sorted(text_messages, key=lambda x: x["date"], reverse=True)
+        counter = 0
+
+        for text_message in text_messages:
+            print(f"{channel} | {text_message['date']}\n")
+
+            if counter > 10 or (
+                datetime.now(timezone.utc) - text_message["date"] > timedelta(days=30)
+            ):
+                break
+
+            text_content = text_message["text"]
+
+            text_content = re.sub(
+                r"<code>([^<>]+)</code>",
+                r"\1",
+                re.sub(
+                    r"<a[^<>]+>([^<>]+)</a>",
+                    r"\1",
+                    re.sub(r"\s*", "", text_content),
+                ),
+            )
+
+            # print(text_content + "\n")
+
+            matches_subscribe = re.findall(pattern_subscribe, text_content)
+            matches_ss = re.findall(pattern_ss, text_content)
+            matches_trojan = re.findall(pattern_trojan, text_content)
+            matches_vmess = re.findall(pattern_vmess, text_content)
+            matches_vless = re.findall(pattern_vless, text_content)
+            matches_reality = re.findall(pattern_reality, text_content)
+
+            for index, element in enumerate(matches_vmess):
+                matches_vmess[index] = re.sub(r"#[^#]+$", "", html.unescape(element))
+
+            for index, element in enumerate(matches_ss):
+                matches_ss[index] = (
+                    re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#{channel}"
+                )
+
+            for index, element in enumerate(matches_trojan):
+                matches_trojan[index] = (
+                    re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#{channel}"
+                )
+
+            for index, element in enumerate(matches_vless):
+                matches_vless[index] = (
+                    re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#{channel}"
+                )
+
+            for index, element in enumerate(matches_reality):
+                matches_reality[index] = (
+                    re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#{channel}"
+                )
+
+            matches_subscribe = [x for x in matches_subscribe if "…" not in x]
+            matches_ss = [x for x in matches_ss if "…" not in x]
+            matches_trojan = [x for x in matches_trojan if "…" not in x]
+            matches_vmess = [x for x in matches_vmess if "…" not in x]
+            matches_vless = [x for x in matches_vless if "…" not in x]
+            matches_reality = [x for x in matches_reality if "…" not in x]
+
+            array_subscribe.extend(matches_subscribe)
+            array_ss.extend(matches_ss)
+            array_trojan.extend(matches_trojan)
+            array_vmess.extend(matches_vmess)
+            array_vless.extend(matches_vless)
+            array_reality.extend(matches_reality)
+
+            if (
+                len(
+                    matches_ss
+                    + matches_trojan
+                    + matches_vmess
+                    + matches_vless
+                    + matches_reality
+                )
+                > 0
+            ):
+                counter += 1
+
     except Exception as e:
         print("An exception occurred:", e)
         traceback.print_exc()
 
-for subscribe in array_subscribe:
+""" for subscribe in array_subscribe:
     try:
         response = requests.get(url=subscribe, timeout=1)
         text_content = response.text
@@ -149,9 +170,9 @@ for subscribe in array_subscribe:
             traceback.print_exc()
     except Exception as e:
         print("An exception occurred:", e)
-        traceback.print_exc()
+        traceback.print_exc() """
 
-try:
+""" try:
     text_content = "\n".join(array_subscribe_decoded)
 
     matches_ss = re.findall(pattern_ss, text_content)
@@ -160,10 +181,10 @@ try:
     matches_vless = re.findall(pattern_vless, text_content)
     matches_reality = re.findall(pattern_reality, text_content)
 
-    """ for index, element in enumerate(matches_vmess):
-        matches_vmess[index] = re.sub(
-            r"#[^#]+$", "", html.unescape(element)
-        ) """
+    # for index, element in enumerate(matches_vmess):
+    #     matches_vmess[index] = re.sub(
+    #         r"#[^#]+$", "", html.unescape(element)
+    #     )
 
     for index, element in enumerate(matches_ss):
         matches_ss[index] = (
@@ -193,9 +214,9 @@ try:
 
 except Exception as e:
     print("An exception occurred:", e)
-    traceback.print_exc()
+    traceback.print_exc() """
 
-array_subscribe_decoded = list(set(array_subscribe_decoded))
+# array_subscribe_decoded = list(set(array_subscribe_decoded))
 array_ss = list(set(array_ss))
 array_trojan = list(set(array_trojan))
 array_vmess = list(set(array_vmess))
@@ -232,12 +253,12 @@ for i in range(0, 10, 1):
 with open("./generated/subs/all", "w", encoding="utf-8") as file:
     file.write(base64.b64encode("\n".join(array_all).encode("utf-8")).decode("utf-8"))
 
-with open("./generated/subs/subscribe", "w", encoding="utf-8") as file:
+""" with open("./generated/subs/subscribe", "w", encoding="utf-8") as file:
     file.write(
         base64.b64encode("\n".join(array_subscribe_decoded).encode("utf-8")).decode(
             "utf-8"
         )
-    )
+    ) """
 
 with open("./generated/subs/ss", "w", encoding="utf-8") as file:
     file.write(base64.b64encode("\n".join(array_ss).encode("utf-8")).decode("utf-8"))
