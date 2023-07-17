@@ -72,12 +72,12 @@ for channel in v2ray_channels:
         counter = 0
 
         for text_message in text_messages:
-            print(f"{channel} | {text_message['date']}\n")
-
             if counter > 20 or (
                 datetime.now(timezone.utc) - text_message["date"] > timedelta(days=14)
             ):
                 break
+
+            print(f"{channel} | {text_message['date']}\n")
 
             text_content = text_message["text"]
 

@@ -10,6 +10,7 @@ import tldextract
 import base64
 import geoip2.database
 import json
+from dns import resolver, rdatatype
 
 
 def is_valid_base64(s):
@@ -49,7 +50,7 @@ def is_ipv6(ip):
         return False
 
 
-def get_ips(node):
+""" def get_ips(node):
     try:
         results = socket.getaddrinfo(node, None, socket.AF_UNSPEC)
 
@@ -58,6 +59,27 @@ def get_ips(node):
         for result in results:
             ip = result[4][0]
             ips.add(ip)
+
+        return ips
+    except:
+        return None """
+
+
+def get_ips(node):
+    try:
+        res = resolver.Resolver()
+        res.nameservers = ["8.8.8.8"]
+
+        answers_ipv4 = res.resolve(node, rdatatype.A, raise_on_no_answer=False)
+        answers_ipv6 = res.resolve(node, rdatatype.AAAA, raise_on_no_answer=False)
+
+        ips = set()
+
+        for rdata in answers_ipv4:
+            ips.add(rdata.address)
+
+        for rdata in answers_ipv6:
+            ips.add(rdata.address)
 
         return ips
     except:
@@ -211,7 +233,7 @@ def make_title(array_input, type):
 
                 config["params"] = re.sub(r"\w+=&", "", config["params"])
                 config["params"] = re.sub(
-                    r"(?:tls=none&)|(?:type=none&)|(?:scy=none&)",
+                    r"(?:tls=none&)|(?:type=none&)|(?:scy=none&)|(?:scy=auto&)",
                     "",
                     config["params"],
                     flags=re.IGNORECASE,
