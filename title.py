@@ -8,6 +8,7 @@ import html
 import random
 import tldextract
 import base64
+import geoip2.database
 
 
 def is_valid_base64(s):
@@ -78,7 +79,7 @@ def get_country_flag(country_code):
     return html.unescape("".join(["&#x{:X};".format(c) for c in codepoints]))
 
 
-def get_country_from_ip(ip):
+""" def get_country_from_ip(ip):
     api = f"https://api.country.is/{ip}"
 
     try:
@@ -86,7 +87,15 @@ def get_country_from_ip(ip):
         return json_dict["country"]
 
     except Exception:
-        return None
+        return None """
+
+
+def get_country_from_ip(ip):
+    with geoip2.database.Reader("./geoip2/GeoLite2-Country.mmdb") as reader:
+        response = reader.country(ip)
+        cc = response.country.iso_code
+        print(f"{cc}\n")
+        return cc
 
 
 def check_port(ip, port, timeout=1):
