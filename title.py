@@ -9,6 +9,7 @@ import random
 import tldextract
 import base64
 import geoip2.database
+import json
 
 
 def is_valid_base64(s):
@@ -123,7 +124,130 @@ def check_port(ip, port, timeout=1):
 def make_title(array_input, type):
     result = []
 
-    if type == "reality" or type == "vless":
+    if type == "vmess":
+        for dict in array_input:
+            pattern = r"vmess://(?P<json>[^#]+)#?(?P<channel>(?<=#).*)?"
+
+            url = dict["url"]
+            date = dict["date"]
+
+            print(url + "\n")
+
+            match = re.match(pattern, url, flags=re.IGNORECASE)
+
+            if match is None:
+                with open("./generated/nomatch.txt", "a") as file:
+                    file.write(f"{url}\n")
+                print("no match\n")
+                continue
+
+            json_string = match.group("json")
+            json_string += "=" * ((4 - len(json_string) % 4) % 4)
+
+            if not is_valid_base64(json_string):
+                with open("./generated/nomatch.txt", "a") as file:
+                    file.write(f"{url}\n")
+                print(f"invalid base64 string: {json_string}\n")
+                continue
+
+            json_string = base64.b64decode(json_string).decode("utf-8")
+
+            dict_params = {}
+
+            try:
+                dict_params = json.loads(json_string)
+                dict_params = {k.lower(): v for k, v in dict_params.items()}
+            except:
+                with open("./generated/nomatch.txt", "a") as file:
+                    file.write(f"{url}\n")
+                print(f"invalid json string: {json_string}\n")
+                continue
+
+            config = {
+                "id": dict_params.get("id", ""),
+                "ip": dict_params.get("add", ""),
+                "host": dict_params.get("add", ""),
+                "port": dict_params.get("port", ""),
+                "params": "",
+                "channel": match.group("channel"),
+            }
+
+            ips = {config["ip"]}
+            if not is_valid_ip_address(config["ip"]):
+                ips = get_ips(config["ip"])
+
+            if ips is None:
+                print("no ip\n")
+                continue
+
+            if (
+                dict_params.get("tls", "") in ["tls"]
+                and dict_params.get("sni", "") == ""
+                and is_valid_domain(config["host"])
+            ):
+                dict_params["sni"] = config["host"]
+                dict_params["allowInsecure"] = 1
+
+            if (
+                dict_params.get("tls", "") in ["tls"]
+                and dict_params.get("sni", "") == ""
+            ):
+                continue
+
+            for ip in ips:
+                config["ip"] = ip
+
+                if not check_port(config["ip"], int(config["port"])):
+                    continue
+
+                flag = get_country_flag(get_country_from_ip(config["ip"]))
+
+                """ if is_ipv6(config["ip"]):
+                    config["ip"] = f"[{config['ip']}]" """
+
+                config[
+                    "params"
+                ] = f"tls={dict_params.get('tls', '')}&sni={dict_params.get('sni', '')}&scy={dict_params.get('scy', '')}&net={dict_params.get('net', '')}&host={dict_params.get('host', '')}&path={dict_params.get('path', '')}&type={dict_params.get('type', '')}&fp={dict_params.get('fp', '')}&alpn={dict_params.get('alpn', '')}&aid={dict_params.get('aid', '')}&v={dict_params.get('v', '')}&allowInsecure={dict_params.get('allowInsecure', '')}&"
+
+                config["params"] = re.sub(r"\w+=&", "", config["params"])
+                config["params"] = re.sub(
+                    r"(?:tls=none&)|(?:type=none&)|(?:scy=none&)",
+                    "",
+                    config["params"],
+                    flags=re.IGNORECASE,
+                )
+                config["params"] = config["params"].strip("&")
+
+                def check_duplicate():
+                    for i, d in enumerate(result):
+                        if (
+                            f"vmess://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                            in d["raw"]
+                        ):
+                            if date < d["date"]:
+                                del result[i]
+                                return False
+                            else:
+                                return True
+
+                    return False
+
+                if check_duplicate() == True:
+                    continue
+
+                config["title"] = f"Vmess | @{config['channel']} | {flag}"
+
+                dict_params["add"] = config["ip"]
+                dict_params["ps"] = config["title"]
+
+                result.append(
+                    {
+                        "raw": f"vmess://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}",
+                        "url": f"vmess://{base64.b64encode(json.dumps(dict_params).encode('utf-8')).decode('utf-8')}",
+                        "date": date,
+                    }
+                )
+    elif type == "reality" or type == "vless":
         for dict in array_input:
             pattern = r"vless://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)?"
 
@@ -392,6 +516,8 @@ def make_title(array_input, type):
             config["id"] += "=" * ((4 - len(config["id"]) % 4) % 4)
 
             if not is_valid_base64(config["id"]):
+                with open("./generated/nomatch.txt", "a") as file:
+                    file.write(f"{url}\n")
                 print(f"invalid base64 string: {config['id']}\n")
                 continue
 

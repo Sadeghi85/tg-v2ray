@@ -101,7 +101,9 @@ for channel in v2ray_channels:
             matches_reality = re.findall(pattern_reality, text_content)
 
             for index, element in enumerate(matches_vmess):
-                matches_vmess[index] = re.sub(r"#[^#]+$", "", html.unescape(element))
+                matches_vmess[index] = (
+                    re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#{channel}"
+                )
 
             for index, element in enumerate(matches_ss):
                 matches_ss[index] = (
@@ -232,15 +234,14 @@ except Exception as e:
 # array_vless = list(set(array_vless))
 # array_reality = list(set(array_reality))
 
-result_vmess = [d["url"] for d in array_vmess]
-
+result_vmess = make_title(array_input=array_vmess, type="vmess")
 result_ss = make_title(array_input=array_ss, type="ss")
 result_trojan = make_title(array_input=array_trojan, type="trojan")
 result_vless = make_title(array_input=array_vless, type="vless")
 result_reality = make_title(array_input=array_reality, type="reality")
 
 # array_all = array_ss + array_trojan + array_vmess + array_vless + array_reality
-result_all = result_ss + result_trojan + result_vless + result_reality
+result_all = result_ss + result_trojan + result_vmess + result_vless + result_reality
 
 random.shuffle(result_all)
 
