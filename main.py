@@ -71,8 +71,8 @@ for channel in v2ray_channels:
         for text_message in text_messages:
             print(f"{channel} | {text_message['date']}\n")
 
-            if counter > 10 or (
-                datetime.now(timezone.utc) - text_message["date"] > timedelta(days=30)
+            if counter > 20 or (
+                datetime.now(timezone.utc) - text_message["date"] > timedelta(days=14)
             ):
                 break
 
@@ -134,17 +134,13 @@ for channel in v2ray_channels:
             array_vless.extend(matches_vless)
             array_reality.extend(matches_reality)
 
-            if (
-                len(
-                    matches_ss
-                    + matches_trojan
-                    + matches_vmess
-                    + matches_vless
-                    + matches_reality
-                )
-                > 0
-            ):
-                counter += 1
+            counter += len(
+                matches_ss
+                + matches_trojan
+                + matches_vmess
+                + matches_vless
+                + matches_reality
+            )
 
     except Exception as e:
         print("An exception occurred:", e)

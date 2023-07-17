@@ -102,7 +102,7 @@ def check_port(ip, port, timeout=1):
     bool: True if the port is open, False otherwise.
     """
     try:
-        sock = socket.create_connection((ip, port), timeout)
+        sock = socket.create_connection(address=(ip, port), timeout=timeout)
         sock.close()
         print("port is open\n")
         return True
@@ -174,8 +174,8 @@ def make_title(array_input, type):
             for ip in ips:
                 config["ip"] = ip
 
-                if not check_port(config["ip"], int(config["port"])):
-                    continue
+                # if not check_port(config["ip"], int(config["port"])):
+                #     continue
 
                 flag = get_country_flag(get_country_from_ip(config["ip"]))
 
@@ -278,8 +278,8 @@ def make_title(array_input, type):
             for ip in ips:
                 config["ip"] = ip
 
-                if not check_port(config["ip"], int(config["port"])):
-                    continue
+                # if not check_port(config["ip"], int(config["port"])):
+                #     continue
 
                 flag = get_country_flag(get_country_from_ip(config["ip"]))
 
@@ -391,8 +391,8 @@ def make_title(array_input, type):
             for ip in ips:
                 config["ip"] = ip
 
-                if not check_port(config["ip"], int(config["port"])):
-                    continue
+                # if not check_port(config["ip"], int(config["port"])):
+                #     continue
 
                 flag = get_country_flag(get_country_from_ip(config["ip"]))
 
