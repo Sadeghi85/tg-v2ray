@@ -123,17 +123,20 @@ def check_port(ip, port, timeout=1):
 def make_title(array_input, type):
     result = []
 
-    random.shuffle(array_input)
-
     if type == "reality" or type == "vless":
-        for element in array_input:
+        for dict in array_input:
             pattern = r"vless://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)?"
 
-            print(element + "\n")
+            url = dict["url"]
+            date = dict["date"]
 
-            match = re.match(pattern, element, flags=re.IGNORECASE)
+            print(url + "\n")
+
+            match = re.match(pattern, url, flags=re.IGNORECASE)
 
             if match is None:
+                with open("./generated/nomatch.txt", "a") as file:
+                    file.write(f"{url}\n")
                 print("no match\n")
                 continue
 
@@ -173,6 +176,20 @@ def make_title(array_input, type):
                 except:
                     pass
 
+            if (
+                dict_params.get("security", "") in ["reality", "tls"]
+                and dict_params.get("sni", "") == ""
+                and is_valid_domain(config["host"])
+            ):
+                dict_params["sni"] = config["host"]
+                dict_params["allowInsecure"] = 1
+
+            if (
+                dict_params.get("security", "") in ["reality", "tls"]
+                and dict_params.get("sni", "") == ""
+            ):
+                continue
+
             for ip in ips:
                 config["ip"] = ip
 
@@ -183,14 +200,6 @@ def make_title(array_input, type):
 
                 if is_ipv6(config["ip"]):
                     config["ip"] = f"[{config['ip']}]"
-
-                if (
-                    dict_params.get("security", "") in ["reality", "tls"]
-                    and dict_params.get("sni", "") == ""
-                    and is_valid_domain(config["host"])
-                ):
-                    dict_params["sni"] = config["host"]
-                    dict_params["allowInsecure"] = 1
 
                 config[
                     "params"
@@ -205,11 +214,21 @@ def make_title(array_input, type):
                 )
                 config["params"] = config["params"].strip("&")
 
-                if any(
-                    f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
-                    in s
-                    for s in result
-                ):
+                def check_duplicate():
+                    for i, d in enumerate(result):
+                        if (
+                            f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                            in d["url"]
+                        ):
+                            if date < d["date"]:
+                                del result[i]
+                                return False
+                            else:
+                                return True
+
+                    return False
+
+                if check_duplicate() == True:
                     continue
 
                 if type == "reality":
@@ -220,17 +239,25 @@ def make_title(array_input, type):
                     config["title"] = f"Vless | @{config['channel']} | {flag}"
 
                 result.append(
-                    f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"
+                    {
+                        "url": f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}",
+                        "date": date,
+                    }
                 )
     elif type == "trojan":
-        for element in array_input:
+        for dict in array_input:
             pattern = r"trojan://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\??(?P<params>[^#]+)?#?(?P<channel>(?<=#).*)?"
 
-            print(element + "\n")
+            url = dict["url"]
+            date = dict["date"]
 
-            match = re.match(pattern, element, flags=re.IGNORECASE)
+            print(url + "\n")
+
+            match = re.match(pattern, url, flags=re.IGNORECASE)
 
             if match is None:
+                with open("./generated/nomatch.txt", "a") as file:
+                    file.write(f"{url}\n")
                 print("no match\n")
                 continue
 
@@ -270,6 +297,20 @@ def make_title(array_input, type):
                 except:
                     pass
 
+            if (
+                dict_params.get("security", "") in ["reality", "tls"]
+                and dict_params.get("sni", "") == ""
+                and is_valid_domain(config["host"])
+            ):
+                dict_params["sni"] = config["host"]
+                dict_params["allowInsecure"] = 1
+
+            if (
+                dict_params.get("security", "") in ["reality", "tls"]
+                and dict_params.get("sni", "") == ""
+            ):
+                continue
+
             for ip in ips:
                 config["ip"] = ip
 
@@ -280,14 +321,6 @@ def make_title(array_input, type):
 
                 if is_ipv6(config["ip"]):
                     config["ip"] = f"[{config['ip']}]"
-
-                if (
-                    dict_params.get("security", "") in ["reality", "tls"]
-                    and dict_params.get("sni", "") == ""
-                    and is_valid_domain(config["host"])
-                ):
-                    dict_params["sni"] = config["host"]
-                    dict_params["allowInsecure"] = 1
 
                 config[
                     "params"
@@ -302,32 +335,50 @@ def make_title(array_input, type):
                 )
                 config["params"] = config["params"].strip("&")
 
-                if any(
-                    f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
-                    in s
-                    for s in result
-                ):
+                def check_duplicate():
+                    for i, d in enumerate(result):
+                        if (
+                            f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                            in d["url"]
+                        ):
+                            if date < d["date"]:
+                                del result[i]
+                                return False
+                            else:
+                                return True
+
+                    return False
+
+                if check_duplicate() == True:
                     continue
 
                 config["title"] = f"Trojan | @{config['channel']} | {flag}"
 
                 result.append(
-                    f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}"
+                    {
+                        "url": f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}",
+                        "date": date,
+                    }
                 )
     elif type == "ss":
-        for element in array_input:
+        for dict in array_input:
             pattern = r"ss://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?#?(?P<channel>(?<=#).*)?"
 
-            print(element + "\n")
+            url = dict["url"]
+            date = dict["date"]
 
-            match = re.match(pattern, element, flags=re.IGNORECASE)
+            print(url + "\n")
+
+            match = re.match(pattern, url, flags=re.IGNORECASE)
 
             if match is None:
                 pattern = r"ss://(?P<id>[^#]+)#?(?P<channel>(?<=#).*)?(?P<ip>(?:))(?P<port>(?:))"
 
-                match = re.match(pattern, element, flags=re.IGNORECASE)
+                match = re.match(pattern, url, flags=re.IGNORECASE)
 
                 if match is None:
+                    with open("./generated/nomatch.txt", "a") as file:
+                        file.write(f"{url}\n")
                     print("no match\n")
                     continue
 
@@ -387,18 +438,32 @@ def make_title(array_input, type):
                 if is_ipv6(config["ip"]):
                     config["ip"] = f"[{config['ip']}]"
 
-                if any(
-                    f"ss://{config['id']}@{config['ip']}:{config['port']}" in s
-                    for s in result
-                ):
+                def check_duplicate():
+                    for i, d in enumerate(result):
+                        if (
+                            f"ss://{config['id']}@{config['ip']}:{config['port']}"
+                            in d["url"]
+                        ):
+                            if date < d["date"]:
+                                del result[i]
+                                return False
+                            else:
+                                return True
+
+                    return False
+
+                if check_duplicate() == True:
                     continue
 
                 config["title"] = f"ShadowSocks | @{config['channel']} | {flag}"
 
                 result.append(
-                    f"ss://{config['id']}@{config['ip']}:{config['port']}#{config['title']}"
+                    {
+                        "url": f"ss://{config['id']}@{config['ip']}:{config['port']}#{config['title']}",
+                        "date": date,
+                    }
                 )
     else:
-        result = array_input
+        return []
 
-    return result
+    return [d["url"] for d in result]

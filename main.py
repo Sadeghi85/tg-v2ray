@@ -29,6 +29,9 @@ array_vmess = []
 array_vless = []
 array_reality = []
 
+with open("./generated/nomatch.txt", "w") as file:
+    file.write("")
+
 with open("v2ray_channels.json") as file:
     v2ray_channels = json.load(file)
 
@@ -90,7 +93,7 @@ for channel in v2ray_channels:
 
             # print(text_content + "\n")
 
-            matches_subscribe = re.findall(pattern_subscribe, text_content)
+            # matches_subscribe = re.findall(pattern_subscribe, text_content)
             matches_ss = re.findall(pattern_ss, text_content)
             matches_trojan = re.findall(pattern_trojan, text_content)
             matches_vmess = re.findall(pattern_vmess, text_content)
@@ -120,19 +123,29 @@ for channel in v2ray_channels:
                     re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#{channel}"
                 )
 
-            matches_subscribe = [x for x in matches_subscribe if "…" not in x]
+            # matches_subscribe = [x for x in matches_subscribe if "…" not in x]
             matches_ss = [x for x in matches_ss if "…" not in x]
             matches_trojan = [x for x in matches_trojan if "…" not in x]
             matches_vmess = [x for x in matches_vmess if "…" not in x]
             matches_vless = [x for x in matches_vless if "…" not in x]
             matches_reality = [x for x in matches_reality if "…" not in x]
 
-            array_subscribe.extend(matches_subscribe)
-            array_ss.extend(matches_ss)
-            array_trojan.extend(matches_trojan)
-            array_vmess.extend(matches_vmess)
-            array_vless.extend(matches_vless)
-            array_reality.extend(matches_reality)
+            # array_subscribe.extend(matches_subscribe)
+            array_ss.extend(
+                [{"url": u, "date": text_message["date"]} for u in matches_ss]
+            )
+            array_trojan.extend(
+                [{"url": u, "date": text_message["date"]} for u in matches_trojan]
+            )
+            array_vmess.extend(
+                [{"url": u, "date": text_message["date"]} for u in matches_vmess]
+            )
+            array_vless.extend(
+                [{"url": u, "date": text_message["date"]} for u in matches_vless]
+            )
+            array_reality.extend(
+                [{"url": u, "date": text_message["date"]} for u in matches_reality]
+            )
 
             counter += len(
                 matches_ss
@@ -213,27 +226,29 @@ except Exception as e:
     traceback.print_exc() """
 
 # array_subscribe_decoded = list(set(array_subscribe_decoded))
-array_ss = list(set(array_ss))
-array_trojan = list(set(array_trojan))
-array_vmess = list(set(array_vmess))
-array_vless = list(set(array_vless))
-array_reality = list(set(array_reality))
+# array_ss = list(set(array_ss))
+# array_trojan = list(set(array_trojan))
+# array_vmess = list(set(array_vmess))
+# array_vless = list(set(array_vless))
+# array_reality = list(set(array_reality))
 
-array_ss = make_title(array_input=array_ss, type="ss")
-array_trojan = make_title(array_input=array_trojan, type="trojan")
-array_vless = make_title(array_input=array_vless, type="vless")
-array_reality = make_title(array_input=array_reality, type="reality")
+result_vmess = [d["url"] for d in array_vmess]
+
+result_ss = make_title(array_input=array_ss, type="ss")
+result_trojan = make_title(array_input=array_trojan, type="trojan")
+result_vless = make_title(array_input=array_vless, type="vless")
+result_reality = make_title(array_input=array_reality, type="reality")
 
 # array_all = array_ss + array_trojan + array_vmess + array_vless + array_reality
-array_all = array_ss + array_trojan + array_vless + array_reality
+result_all = result_ss + result_trojan + result_vless + result_reality
 
-random.shuffle(array_all)
+random.shuffle(result_all)
 
 chunk_size = 100  # maximum size of each chunk
 chunks = []
 
-for i in range(0, len(array_all), chunk_size):
-    chunk = array_all[i : i + chunk_size]
+for i in range(0, len(result_all), chunk_size):
+    chunk = result_all[i : i + chunk_size]
     chunks.append(chunk)
 
 for i in range(0, 10, 1):
@@ -247,7 +262,7 @@ for i in range(0, 10, 1):
             file.write("")
 
 with open("./generated/subs/all", "w", encoding="utf-8") as file:
-    file.write(base64.b64encode("\n".join(array_all).encode("utf-8")).decode("utf-8"))
+    file.write(base64.b64encode("\n".join(result_all).encode("utf-8")).decode("utf-8"))
 
 """ with open("./generated/subs/subscribe", "w", encoding="utf-8") as file:
     file.write(
@@ -257,18 +272,22 @@ with open("./generated/subs/all", "w", encoding="utf-8") as file:
     ) """
 
 with open("./generated/subs/ss", "w", encoding="utf-8") as file:
-    file.write(base64.b64encode("\n".join(array_ss).encode("utf-8")).decode("utf-8"))
+    file.write(base64.b64encode("\n".join(result_ss).encode("utf-8")).decode("utf-8"))
 with open("./generated/subs/trojan", "w", encoding="utf-8") as file:
     file.write(
-        base64.b64encode("\n".join(array_trojan).encode("utf-8")).decode("utf-8")
+        base64.b64encode("\n".join(result_trojan).encode("utf-8")).decode("utf-8")
     )
 with open("./generated/subs/vmess", "w", encoding="utf-8") as file:
-    file.write(base64.b64encode("\n".join(array_vmess).encode("utf-8")).decode("utf-8"))
+    file.write(
+        base64.b64encode("\n".join(result_vmess).encode("utf-8")).decode("utf-8")
+    )
 with open("./generated/subs/vless", "w", encoding="utf-8") as file:
-    file.write(base64.b64encode("\n".join(array_vless).encode("utf-8")).decode("utf-8"))
+    file.write(
+        base64.b64encode("\n".join(result_vless).encode("utf-8")).decode("utf-8")
+    )
 with open("./generated/subs/reality", "w", encoding="utf-8") as file:
     file.write(
-        base64.b64encode("\n".join(array_reality).encode("utf-8")).decode("utf-8")
+        base64.b64encode("\n".join(result_reality).encode("utf-8")).decode("utf-8")
     )
 
 
