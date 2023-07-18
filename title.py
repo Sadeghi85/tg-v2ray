@@ -114,11 +114,14 @@ def get_country_flag(country_code):
 
 
 def get_country_from_ip(ip):
-    with geoip2.database.Reader("./geoip2/GeoLite2-Country.mmdb") as reader:
-        response = reader.country(ip)
-        cc = response.country.iso_code
-        print(f"{cc}\n")
-        return cc
+    try:
+        with geoip2.database.Reader("./geoip2/GeoLite2-Country.mmdb") as reader:
+            response = reader.country(ip)
+            cc = response.country.iso_code
+            print(f"{cc}\n")
+            return cc
+    except:
+        return None
 
 
 def check_port(ip, port, timeout=1):
