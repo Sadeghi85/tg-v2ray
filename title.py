@@ -175,7 +175,9 @@ def make_title(array_input, type):
                 print(f"invalid base64 string: {json_string}\n")
                 continue
 
-            json_string = base64.b64decode(json_string).decode("utf-8")
+            json_string = base64.b64decode(json_string).decode(
+                encoding="utf-8", errors="ignore"
+            )
 
             dict_params = {}
 
@@ -553,7 +555,9 @@ def make_title(array_input, type):
 
                 match = re.match(
                     pattern,
-                    base64.b64decode(config["id"]).decode("utf-8"),
+                    base64.b64decode(config["id"]).decode(
+                        encoding="utf-8", errors="ignore"
+                    ),
                     flags=re.IGNORECASE,
                 )
 
