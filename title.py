@@ -148,6 +148,7 @@ def check_port(ip, port, timeout=1):
 
 def make_title(array_input, type):
     result = []
+    result_sazman = []
 
     if type == "vmess":
         for dict in array_input:
@@ -274,6 +275,15 @@ def make_title(array_input, type):
                         "date": date,
                     }
                 )
+
+                if config["port"] in ["80", "8080", "443"]:
+                    result_sazman.append(
+                        {
+                            "raw": f"vmess://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}",
+                            "url": f"vmess://{base64.b64encode(json.dumps(dict_params).encode('utf-8')).decode('utf-8')}",
+                            "date": date,
+                        }
+                    )
     elif type == "reality" or type == "vless":
         for dict in array_input:
             pattern = r"vless://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)?"
@@ -395,6 +405,14 @@ def make_title(array_input, type):
                         "date": date,
                     }
                 )
+
+                if config["port"] in ["80", "8080", "443"]:
+                    result_sazman.append(
+                        {
+                            "url": f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}",
+                            "date": date,
+                        }
+                    )
     elif type == "trojan":
         for dict in array_input:
             pattern = r"trojan://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\??(?P<params>[^#]+)?#?(?P<channel>(?<=#).*)?"
@@ -511,6 +529,14 @@ def make_title(array_input, type):
                         "date": date,
                     }
                 )
+
+                if config["port"] in ["80", "8080", "443"]:
+                    result_sazman.append(
+                        {
+                            "url": f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}",
+                            "date": date,
+                        }
+                    )
     elif type == "ss":
         for dict in array_input:
             pattern = r"ss://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?#?(?P<channel>(?<=#).*)?"
@@ -618,7 +644,15 @@ def make_title(array_input, type):
                         "date": date,
                     }
                 )
-    else:
-        return []
 
-    return [d["url"] for d in result]
+                if config["port"] in ["80", "8080", "443"]:
+                    result_sazman.append(
+                        {
+                            "url": f"ss://{config['id']}@{config['ip']}:{config['port']}#{config['title']}",
+                            "date": date,
+                        }
+                    )
+    else:
+        return ([], [])
+
+    return ([d["url"] for d in result], [d["url"] for d in result_sazman])

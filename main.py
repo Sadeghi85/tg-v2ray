@@ -248,16 +248,28 @@ except Exception as e:
 # array_vless = list(set(array_vless))
 # array_reality = list(set(array_reality))
 
-result_vmess = make_title(array_input=array_vmess, type="vmess")
-result_ss = make_title(array_input=array_ss, type="ss")
-result_trojan = make_title(array_input=array_trojan, type="trojan")
-result_vless = make_title(array_input=array_vless, type="vless")
-result_reality = make_title(array_input=array_reality, type="reality")
+result_vmess, result_sazman_vmess = make_title(array_input=array_vmess, type="vmess")
+result_ss, result_sazman_ss = make_title(array_input=array_ss, type="ss")
+result_trojan, result_sazman_trojan = make_title(
+    array_input=array_trojan, type="trojan"
+)
+result_vless, result_sazman_vless = make_title(array_input=array_vless, type="vless")
+result_reality, result_sazman_reality = make_title(
+    array_input=array_reality, type="reality"
+)
 
 # array_all = array_ss + array_trojan + array_vmess + array_vless + array_reality
 result_all = result_ss + result_trojan + result_vmess + result_vless + result_reality
+result_sazman_all = (
+    result_sazman_ss
+    + result_sazman_trojan
+    + result_sazman_vmess
+    + result_sazman_vless
+    + result_sazman_reality
+)
 
 random.shuffle(result_all)
+random.shuffle(result_sazman_all)
 
 chunk_size = 100  # maximum size of each chunk
 chunks = []
@@ -278,6 +290,11 @@ for i in range(0, 10, 1):
 
 with open("./generated/subs/all", "w", encoding="utf-8") as file:
     file.write(base64.b64encode("\n".join(result_all).encode("utf-8")).decode("utf-8"))
+
+with open("./generated/subs/all_sazman", "w", encoding="utf-8") as file:
+    file.write(
+        base64.b64encode("\n".join(result_sazman_all).encode("utf-8")).decode("utf-8")
+    )
 
 """ with open("./generated/subs/subscribe", "w", encoding="utf-8") as file:
     file.write(
