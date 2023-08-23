@@ -35,18 +35,20 @@ with open("./generated/nomatch.txt", "w") as file:
 with open("found_channels.json") as file:
     found_channels = json.load(file)
 
-with open("v2ray_channels.json") as file:
-    v2ray_channels = json.load(file)
+# with open("v2ray_channels.json") as file:
+#     v2ray_channels = json.load(file)
 
-v2ray_channels = [item.lower() for item in v2ray_channels]
-v2ray_channels = list(set(v2ray_channels))
-v2ray_channels = sorted(v2ray_channels)
-with open("./v2ray_channels.json", "w") as telegram_channels_file:
-    json.dump(v2ray_channels, telegram_channels_file, indent=4)
+# v2ray_channels = [item.lower() for item in v2ray_channels]
+# v2ray_channels = list(set(v2ray_channels))
+# v2ray_channels = sorted(v2ray_channels)
+# with open("./v2ray_channels.json", "w") as telegram_channels_file:
+#     json.dump(v2ray_channels, telegram_channels_file, indent=4)
 
-all_channels = list(set(v2ray_channels) | set(found_channels))
+# all_channels = list(set(v2ray_channels) | set(found_channels))
 
-for channel in all_channels:
+found_channels = list(set(found_channels))
+
+for channel in found_channels:
     try:
         url = "https://t.me/s/" + channel
         response = requests.get(url)

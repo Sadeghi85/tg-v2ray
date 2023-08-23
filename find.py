@@ -129,16 +129,17 @@ with open("./last_update", "r") as file:
 current_datetime_update = datetime.now(tz=timezone(timedelta(hours=3, minutes=30)))
 
 
-main_channels = [item.lower() for item in json_load("v2ray_channels.json")]
+# main_channels = [item.lower() for item in json_load("v2ray_channels.json")]
 found_channels = [item.lower() for item in json_load("found_channels.json")]
 
-all_channels = list(set(main_channels) | set(found_channels))
+# all_channels = list(set(main_channels) | set(found_channels))
+found_channels = list(set(found_channels))
 
 # Initial channels messages array
 channel_messages_array = list()
 
 # Iterate over all public telegram chanels and store twenty latest messages
-for channel_user in all_channels:
+for channel_user in found_channels:
     try:
         print(f"{channel_user}")
         # Iterate over Telegram channels to Retrieve channel messages and extend to array
@@ -201,7 +202,7 @@ for url in array_url:
 tg_username_list.update(array_usernames)
 
 # Subtract and get new telegram channels
-new_telegram_channels = tg_username_list.difference(main_channels)
+new_telegram_channels = tg_username_list.difference(found_channels)
 
 # Initial channels messages array
 new_channel_messages = list()
@@ -235,8 +236,6 @@ new_array_channels = list()
 for channel, messages in new_channel_messages:
     # Set Iterator to estimate each channel configurations
     total_config = 0
-    new_array_url = list()
-    new_array_usernames = list()
 
     for message in messages:
         try:
@@ -261,12 +260,6 @@ for channel, messages in new_channel_messages:
                 + len(matches_reality)
             )
 
-            # Extend protocol type arrays and subscription link array
-            new_array_usernames.extend(
-                [element.lower() for element in matches_usersname]
-            )
-            new_array_url.extend(matches_url)
-
         except Exception as exc:
             continue
 
@@ -274,29 +267,8 @@ for channel, messages in new_channel_messages:
     if total_config != 0:
         new_array_channels.append(channel)
 
-    # Split Telegram usernames and subscription url links
-    tg_username_list_new = set()
 
-    for url in new_array_url:
-        try:
-            tg_user = tg_username_extract(url)
-            if tg_user not in ["proxy", "img", "emoji", "joinchat"]:
-                tg_username_list_new.add(tg_user.lower())
-        except:
-            url_subscription_links.add(url.split('"')[0])
-            continue
-
-    # Subtract and get new telegram channels
-    tg_username_list_new.update(new_array_usernames)
-    tg_username_list_new = tg_username_list_new.difference(main_channels)
-    tg_username_list_new = tg_username_list_new.difference(new_telegram_channels)
-    updated_new_channel = set(
-        list(map(lambda element: element[0], new_channel_messages))
-    )
-    tg_username_list_new = tg_username_list_new.difference(updated_new_channel)
-
-
-print("New Configuration Telegram Channels Found")
+print("New Configuration Telegram Channels Found:")
 for channel in new_array_channels:
     print("\t{value}".format(value=channel))
 
