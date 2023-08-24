@@ -53,6 +53,5 @@ jobs:
           git config --local user.name "GitHub Action"
           git add -A
           git commit -a -m "updated subs" --allow-empty
-          git branch -D main
           git branch -m main
           git push -f origin main
