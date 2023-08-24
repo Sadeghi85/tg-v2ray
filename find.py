@@ -148,16 +148,17 @@ for channel_user in found_channels:
             datetime_object, datetime_now, delta_datetime_now = tg_message_time(
                 div_message
             )
-            if datetime_object > last_update_datetime:
-                print(f"\t{datetime_object.strftime('%a, %d %b %Y %X %Z')}")
+            # if datetime_object > last_update_datetime:
+            #     print(f"\t{datetime_object.strftime('%a, %d %b %Y %X %Z')}")
+            #     channel_messages_array.append((channel_user, div_message))
+            now = datetime.now(timezone.utc)
+            midnight_utc = datetime(
+                now.year, now.month, now.day, 0, 0, 0, tzinfo=timezone.utc
+            )
+            if midnight_utc - datetime_object < timedelta(days=14):
                 channel_messages_array.append((channel_user, div_message))
     except Exception as exc:
         continue
-
-# Print out total new messages counter
-print(
-    f"\nTotal New Messages From {last_update_datetime.strftime('%a, %d %b %Y %X %Z')} To {current_datetime_update.strftime('%a, %d %b %Y %X %Z')} : {len(channel_messages_array)}\n"
-)
 
 # Initial arrays for protocols
 array_usernames = list()
@@ -223,12 +224,6 @@ for channel_user in new_telegram_channels:
         new_channel_messages.append((channel_user, channel_messages))
     except:
         continue
-
-# Messages Counter
-print(
-    f"\nTotal New Messages From New Channels {last_update_datetime.strftime('%a, %d %b %Y %X %Z')} To {current_datetime_update.strftime('%a, %d %b %Y %X %Z')} : {len(new_channel_messages)}\n"
-)
-
 
 # Initialize array for channelswith configuration contents
 new_array_channels = list()
