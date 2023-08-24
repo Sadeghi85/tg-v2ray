@@ -11,6 +11,8 @@ jobs:
 
       - name: checkout repo content
         uses: actions/checkout@v3 # checkout the repository content to github runner
+        with:
+          ref: dev
 
       - name: setup python
         uses: actions/setup-python@v4
