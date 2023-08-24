@@ -10,19 +10,12 @@ import traceback
 import random
 from title import make_title
 
-
-pattern_subscribe = (
-    r"(?<!\w)(https?://(?:(?!://)[^\s<>])+?subscribe\?token=(?:(?!://)[^\s<>])+)"
-)
 pattern_ss = r"(?<![\w-])(ss://[^\s<>#]+)"
 pattern_trojan = r"(?<![\w-])(trojan://[^\s<>#]+)"
 pattern_vmess = r"(?<![\w-])(vmess://[^\s<>#]+)"
 pattern_vless = r"(?<![\w-])(vless://(?:(?!=reality)[^\s<>#])+(?=[\s<>#]))"
 pattern_reality = r"(?<![\w-])(vless://[^\s<>#]+?security=reality[^\s<>#]*)"
 
-array_subscribe = []
-array_subscribe_decoded = []
-array_all = []
 array_ss = []
 array_trojan = []
 array_vmess = []
@@ -35,23 +28,12 @@ with open("./generated/nomatch.txt", "w") as file:
 with open("found_channels.json") as file:
     found_channels = json.load(file)
 
-# with open("v2ray_channels.json") as file:
-#     v2ray_channels = json.load(file)
-
-# v2ray_channels = [item.lower() for item in v2ray_channels]
-# v2ray_channels = list(set(v2ray_channels))
-# v2ray_channels = sorted(v2ray_channels)
-# with open("./v2ray_channels.json", "w") as telegram_channels_file:
-#     json.dump(v2ray_channels, telegram_channels_file, indent=4)
-
-# all_channels = list(set(v2ray_channels) | set(found_channels))
-
 found_channels = list(set(found_channels))
 
 for channel in found_channels:
     try:
         url = "https://t.me/s/" + channel
-        response = requests.get(url)
+        response = requests.get(url=url, timeout=5)
         html_content = response.text
 
         soup = BeautifulSoup(html_content, "html.parser")
@@ -109,12 +91,11 @@ for channel in found_channels:
 
             # print(text_content + "\n")
 
-            # matches_subscribe = re.findall(pattern_subscribe, text_content)
-            matches_ss = re.findall(pattern_ss, text_content)
-            matches_trojan = re.findall(pattern_trojan, text_content)
-            matches_vmess = re.findall(pattern_vmess, text_content)
-            matches_vless = re.findall(pattern_vless, text_content)
-            matches_reality = re.findall(pattern_reality, text_content)
+            matches_ss = re.findall(pattern_ss, text_content, re.IGNORECASE)
+            matches_trojan = re.findall(pattern_trojan, text_content, re.IGNORECASE)
+            matches_vmess = re.findall(pattern_vmess, text_content, re.IGNORECASE)
+            matches_vless = re.findall(pattern_vless, text_content, re.IGNORECASE)
+            matches_reality = re.findall(pattern_reality, text_content, re.IGNORECASE)
 
             for index, element in enumerate(matches_vmess):
                 matches_vmess[index] = (
@@ -177,79 +158,6 @@ for channel in found_channels:
         print("An exception occurred:", e)
         traceback.print_exc()
 
-""" for subscribe in array_subscribe:
-    try:
-        response = requests.get(url=subscribe, timeout=1)
-        text_content = response.text
-
-        try:
-            text_content += "=" * ((4 - len(text_content) % 4) % 4)
-            decoded = base64.b64decode(text_content).decode("utf-8")
-
-            matches_subscribe_decoded = decoded.splitlines()
-
-            for index, element in enumerate(matches_subscribe_decoded):
-                matches_subscribe_decoded[index] = re.sub(r"#[^#]+$", "", element)
-
-            array_subscribe_decoded.extend(matches_subscribe_decoded)
-        except Exception as e:
-            print("An exception occurred:", e)
-            traceback.print_exc()
-    except Exception as e:
-        print("An exception occurred:", e)
-        traceback.print_exc() """
-
-""" try:
-    text_content = "\n".join(array_subscribe_decoded)
-
-    matches_ss = re.findall(pattern_ss, text_content)
-    matches_trojan = re.findall(pattern_trojan, text_content)
-    # matches_vmess = re.findall(pattern_vmess, text_content)
-    matches_vless = re.findall(pattern_vless, text_content)
-    matches_reality = re.findall(pattern_reality, text_content)
-
-    # for index, element in enumerate(matches_vmess):
-    #     matches_vmess[index] = re.sub(
-    #         r"#[^#]+$", "", html.unescape(element)
-    #     )
-
-    for index, element in enumerate(matches_ss):
-        matches_ss[index] = (
-            re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#Subscribe"
-        )
-
-    for index, element in enumerate(matches_trojan):
-        matches_trojan[index] = (
-            re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#Subscribe"
-        )
-
-    for index, element in enumerate(matches_vless):
-        matches_vless[index] = (
-            re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#Subscribe"
-        )
-
-    for index, element in enumerate(matches_reality):
-        matches_reality[index] = (
-            re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#Subscribe"
-        )
-
-    array_ss.extend(matches_ss)
-    array_trojan.extend(matches_trojan)
-    array_vmess.extend(matches_vmess)
-    array_vless.extend(matches_vless)
-    array_reality.extend(matches_reality)
-
-except Exception as e:
-    print("An exception occurred:", e)
-    traceback.print_exc() """
-
-# array_subscribe_decoded = list(set(array_subscribe_decoded))
-# array_ss = list(set(array_ss))
-# array_trojan = list(set(array_trojan))
-# array_vmess = list(set(array_vmess))
-# array_vless = list(set(array_vless))
-# array_reality = list(set(array_reality))
-
 result_vmess, result_sazman_vmess = make_title(array_input=array_vmess, type="vmess")
 result_ss, result_sazman_ss = make_title(array_input=array_ss, type="ss")
 result_trojan, result_sazman_trojan = make_title(
@@ -260,7 +168,6 @@ result_reality, result_sazman_reality = make_title(
     array_input=array_reality, type="reality"
 )
 
-# array_all = array_ss + array_trojan + array_vmess + array_vless + array_reality
 result_all = result_ss + result_trojan + result_vmess + result_vless + result_reality
 result_sazman_all = (
     result_sazman_ss
@@ -298,13 +205,6 @@ with open("./generated/subs/all_sazman", "w", encoding="utf-8") as file:
         base64.b64encode("\n".join(result_sazman_all).encode("utf-8")).decode("utf-8")
     )
 
-""" with open("./generated/subs/subscribe", "w", encoding="utf-8") as file:
-    file.write(
-        base64.b64encode("\n".join(array_subscribe_decoded).encode("utf-8")).decode(
-            "utf-8"
-        )
-    ) """
-
 with open("./generated/subs/ss", "w", encoding="utf-8") as file:
     file.write(base64.b64encode("\n".join(result_ss).encode("utf-8")).decode("utf-8"))
 with open("./generated/subs/trojan", "w", encoding="utf-8") as file:
@@ -323,49 +223,3 @@ with open("./generated/subs/reality", "w", encoding="utf-8") as file:
     file.write(
         base64.b64encode("\n".join(result_reality).encode("utf-8")).decode("utf-8")
     )
-
-
-""" 
-
-with open("./generated/v2ray_all_base64.txt", "w", encoding="utf-8") as file:
-    file.write(base64.b64encode("\n".join(array_all).encode("utf-8")).decode("utf-8"))
-
-with open("./generated/v2ray_subscribe_decoded_base64.txt", "w", encoding="utf-8") as file:
-    file.write(
-        base64.b64encode("\n".join(array_subscribe_decoded).encode("utf-8")).decode(
-            "utf-8"
-        )
-    )
-with open("./generated/v2ray_ss_base64.txt", "w", encoding="utf-8") as file:
-    file.write(base64.b64encode("\n".join(array_ss).encode("utf-8")).decode("utf-8"))
-with open("./generated/v2ray_trojan_base64.txt", "w", encoding="utf-8") as file:
-    file.write(
-        base64.b64encode("\n".join(array_trojan).encode("utf-8")).decode("utf-8")
-    )
-with open("./generated/v2ray_vmess_base64.txt", "w", encoding="utf-8") as file:
-    file.write(base64.b64encode("\n".join(array_vmess).encode("utf-8")).decode("utf-8"))
-with open("./generated/v2ray_vless_base64.txt", "w", encoding="utf-8") as file:
-    file.write(base64.b64encode("\n".join(array_vless).encode("utf-8")).decode("utf-8"))
-with open("./generated/v2ray_reality_base64.txt", "w", encoding="utf-8") as file:
-    file.write(
-        base64.b64encode("\n".join(array_reality).encode("utf-8")).decode("utf-8")
-    )
- """
-
-""" with open("./generated/v2ray_all.txt", "w", encoding="utf-8") as file:
-    file.writelines(f"{element}\n" for element in array_all)
-with open("./generated/v2ray_subscribe_decoded.txt", "w", encoding="utf-8") as file:
-    file.writelines(f"{element}\n" for element in array_subscribe_decoded)
-with open("./generated/v2ray_subscribe.txt", "w", encoding="utf-8") as file:
-    file.writelines(f"{element}\n" for element in array_subscribe)
-with open("./generated/v2ray_ss.txt", "w", encoding="utf-8") as file:
-    file.writelines(f"{element}\n" for element in array_ss)
-with open("./generated/v2ray_trojan.txt", "w", encoding="utf-8") as file:
-    file.writelines(f"{element}\n" for element in array_trojan)
-with open("./generated/v2ray_vmess.txt", "w", encoding="utf-8") as file:
-    file.writelines(f"{element}\n" for element in array_vmess)
-with open("./generated/v2ray_vless.txt", "w", encoding="utf-8") as file:
-    file.writelines(f"{element}\n" for element in array_vless)
-with open("./generated/v2ray_reality.txt", "w", encoding="utf-8") as file:
-    file.writelines(f"{element}\n" for element in array_reality)
- """
