@@ -53,7 +53,11 @@ def tg_message_text(div_message):
         text_content = re.sub(
             r"<code>([^<>]+)</code>",
             r"\1",
-            re.sub(r"\s*", "", text_content),
+            re.sub(
+                r"<a[^<>]+>([^<>]+)</a>",
+                r"\1",
+                re.sub(r"\s*", "", text_content),
+            ),
         )
 
         return text_content
@@ -141,6 +145,11 @@ for channel_user in found_channels:
                 continue
 
             if midnight_utc - datetime_object < timedelta(days=14):
+                # print(
+                #     datetime_object.strftime("%Y-%m-%d %H:%M:%S")
+                #     + ": \n"
+                #     + str(tg_message_text(div_message))
+                # )
                 channel_messages_array.append((channel_user, div_message))
     except:
         continue
@@ -151,6 +160,9 @@ array_url = set()
 for channel_user, message in channel_messages_array:
     try:
         text_content = tg_message_text(message)
+
+        if text_content is None:
+            continue
 
         (
             matches_username,
@@ -176,6 +188,8 @@ for url in array_url:
 
         if tg_user is None:
             continue
+
+        # print(tg_user + "\n")
         if tg_user not in ["proxy", "img", "emoji", "joinchat", "s"]:
             tg_username_list.add(tg_user.lower())
     except Exception as ex:
@@ -219,6 +233,9 @@ for channel, messages in new_channel_messages:
         try:
             text_content = tg_message_text(message)
 
+            if text_content is None:
+                continue
+
             (
                 matches_username,
                 matches_url,
@@ -241,10 +258,13 @@ for channel, messages in new_channel_messages:
         except:
             continue
 
+    # print(total_config)
     if total_config > 0:
         new_array_channels.add(channel)
 
 found_channels = sorted(list(new_array_channels))
+
+# print(found_channels)
 
 with open("./found_channels.json", "w") as telegram_channels_file:
     json.dump(found_channels, telegram_channels_file, indent=4)

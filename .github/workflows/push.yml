@@ -32,7 +32,6 @@ jobs:
           wget -nv "https://github.com/P3TERX/GeoLite.mmdb/raw/download/GeoLite2-Country.mmdb"
           mkdir -p geoip2
           mv -v GeoLite2-Country.mmdb geoip2
-          python find.py
           python main.py
           
       # - name: commit files
