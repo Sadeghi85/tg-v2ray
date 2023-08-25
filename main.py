@@ -22,7 +22,7 @@ array_vmess = []
 array_vless = []
 array_reality = []
 
-with open("./generated/nomatch.txt", "w") as file:
+with open("./generated/nomatch.txt", "w", encoding="utf-8") as file:
     file.write("")
 
 with open("found_channels.json") as file:

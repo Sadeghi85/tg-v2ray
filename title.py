@@ -162,7 +162,7 @@ def make_title(array_input, type):
             match = re.match(pattern, url, flags=re.IGNORECASE)
 
             if match is None:
-                with open("./generated/nomatch.txt", "a") as file:
+                with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
                     file.write(f"{url}\n")
                 print("no match\n")
                 continue
@@ -171,7 +171,7 @@ def make_title(array_input, type):
             json_string += "=" * ((4 - len(json_string) % 4) % 4)
 
             if not is_valid_base64(json_string):
-                with open("./generated/nomatch.txt", "a") as file:
+                with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
                     file.write(f"{url}\n")
                 print(f"invalid base64 string: {json_string}\n")
                 continue
@@ -186,7 +186,7 @@ def make_title(array_input, type):
                 dict_params = json.loads(json_string)
                 dict_params = {k.lower(): v for k, v in dict_params.items()}
             except:
-                with open("./generated/nomatch.txt", "a") as file:
+                with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
                     file.write(f"{url}\n")
                 print(f"invalid json string: {json_string}\n")
                 continue
@@ -221,6 +221,15 @@ def make_title(array_input, type):
                 and dict_params.get("sni", "") == ""
             ):
                 continue
+
+            if dict_params.get("sni", "") != "":
+                if not re.match(
+                    r"[a-zA-Z0-9\.-]+", dict_params["sni"], flags=re.IGNORECASE
+                ):
+                    with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
+                        file.write(f"{url}\n")
+                    continue
+                dict_params["sni"] = str(dict_params["sni"]).lower()
 
             for ip in ips:
                 config["ip"] = ip
@@ -296,7 +305,7 @@ def make_title(array_input, type):
             match = re.match(pattern, url, flags=re.IGNORECASE)
 
             if match is None:
-                with open("./generated/nomatch.txt", "a") as file:
+                with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
                     file.write(f"{url}\n")
                 print("no match\n")
                 continue
@@ -350,6 +359,15 @@ def make_title(array_input, type):
                 and dict_params.get("sni", "") == ""
             ):
                 continue
+
+            if dict_params.get("sni", "") != "":
+                if not re.match(
+                    r"[a-zA-Z0-9\.-]+", dict_params["sni"], flags=re.IGNORECASE
+                ):
+                    with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
+                        file.write(f"{url}\n")
+                    continue
+                dict_params["sni"] = str(dict_params["sni"]).lower()
 
             for ip in ips:
                 config["ip"] = ip
@@ -425,7 +443,7 @@ def make_title(array_input, type):
             match = re.match(pattern, url, flags=re.IGNORECASE)
 
             if match is None:
-                with open("./generated/nomatch.txt", "a") as file:
+                with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
                     file.write(f"{url}\n")
                 print("no match\n")
                 continue
@@ -479,6 +497,15 @@ def make_title(array_input, type):
                 and dict_params.get("sni", "") == ""
             ):
                 continue
+
+            if dict_params.get("sni", "") != "":
+                if not re.match(
+                    r"[a-zA-Z0-9\.-]+", dict_params["sni"], flags=re.IGNORECASE
+                ):
+                    with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
+                        file.write(f"{url}\n")
+                    continue
+                dict_params["sni"] = str(dict_params["sni"]).lower()
 
             for ip in ips:
                 config["ip"] = ip
@@ -554,7 +581,7 @@ def make_title(array_input, type):
                 match = re.match(pattern, url, flags=re.IGNORECASE)
 
                 if match is None:
-                    with open("./generated/nomatch.txt", "a") as file:
+                    with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
                         file.write(f"{url}\n")
                     print("no match\n")
                     continue
@@ -569,7 +596,7 @@ def make_title(array_input, type):
             config["id"] += "=" * ((4 - len(config["id"]) % 4) % 4)
 
             if not is_valid_base64(config["id"]):
-                with open("./generated/nomatch.txt", "a") as file:
+                with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
                     file.write(f"{url}\n")
                 print(f"invalid base64 string: {config['id']}\n")
                 continue
@@ -588,6 +615,8 @@ def make_title(array_input, type):
                 )
 
                 if match is None:
+                    with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
+                        file.write(f"{url}\n")
                     print("no match\n")
                     continue
 
