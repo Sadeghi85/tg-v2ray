@@ -291,8 +291,10 @@ def make_title(array_input, type):
                             "raw": f"vmess://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}",
                             "url": f"vmess://{base64.b64encode(json.dumps(dict_params).encode('utf-8')).decode('utf-8')}",
                             "date": date,
+                            "sort-string": f"vmess://{config['id']}@{config['ip']}:{config['port']}?{config['params']}",
                         }
                     )
+
     elif type == "reality" or type == "vless":
         for dict in array_input:
             pattern = r"vless://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)?"
@@ -429,6 +431,7 @@ def make_title(array_input, type):
                         {
                             "url": f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}",
                             "date": date,
+                            "sort-string": f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}",
                         }
                     )
     elif type == "trojan":
@@ -562,6 +565,7 @@ def make_title(array_input, type):
                         {
                             "url": f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}",
                             "date": date,
+                            "sort-string": f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}",
                         }
                     )
     elif type == "ss":
@@ -679,9 +683,19 @@ def make_title(array_input, type):
                         {
                             "url": f"ss://{config['id']}@{config['ip']}:{config['port']}#{config['title']}",
                             "date": date,
+                            "sort-string": f"ss://{config['id']}@{config['ip']}:{config['port']}",
                         }
                     )
     else:
         return ([], [])
+
+    result_sazman = sorted(result_sazman, key=lambda x: x["date"], reverse=True)
+
+    seen_urls = {}
+    result_sazman = [
+        seen_urls.setdefault(item["sort-string"], item)
+        for item in result_sazman
+        if item["sort-string"] not in seen_urls
+    ]
 
     return ([d["url"] for d in result], [d["url"] for d in result_sazman])
