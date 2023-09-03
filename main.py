@@ -10,6 +10,65 @@ import traceback
 import random
 from title import make_title
 
+
+def download_and_parse(channel, wanted_date=None, before=None, results=None):
+    if results is None:
+        results = []
+
+    if before is None:
+        url = f"https://t.me/s/{channel}"
+    else:
+        url = f"https://t.me/s/{channel}?before={before}"
+
+    try:
+        response = requests.get(url=url, timeout=5)
+        response.raise_for_status()
+
+        doc = BeautifulSoup(response.text, "html.parser")
+
+        prevPage = doc.find(
+            "a", attrs={"class": "tme_messages_more", "data-before": True}
+        )
+        if prevPage:
+            before = prevPage["data-before"]
+        else:
+            before = None
+
+        div_messages = doc.find_all("div", class_="tgme_widget_message")
+
+        if div_messages:
+            found_date = None
+            for div_message in div_messages:
+                try:
+                    div_message_info = div_message.find(
+                        "div", class_="tgme_widget_message_info"
+                    )
+                    time_tag = div_message_info.find("time")
+                    datetime_attribute = time_tag["datetime"]
+                    datetime_object = datetime.fromisoformat(datetime_attribute)
+
+                    if found_date is None:
+                        found_date = datetime_object
+
+                    div_message_text = div_message.find(
+                        "div", class_="tgme_widget_message_text"
+                    )
+                    text_content = div_message_text.prettify()
+                    message_dict = {"text": text_content, "date": datetime_object}
+
+                    results.append(message_dict)
+                except:
+                    pass
+
+            if before and found_date and wanted_date and found_date > wanted_date:
+                return download_and_parse(channel, wanted_date, before, results)
+
+    except:
+        pass
+
+    return results
+
+
 pattern_ss = r"(?<![\w-])(ss://[^\s<>#]+)"
 pattern_trojan = r"(?<![\w-])(trojan://[^\s<>#]+)"
 pattern_vmess = r"(?<![\w-])(vmess://[^\s<>#]+)"
@@ -32,45 +91,56 @@ found_channels = list(set(found_channels))
 
 for channel in found_channels:
     try:
-        url = "https://t.me/s/" + channel
-        response = requests.get(url=url, timeout=5)
-        html_content = response.text
+        # url = "https://t.me/s/" + channel
+        # response = requests.get(url=url, timeout=5)
+        # html_content = response.text
 
-        soup = BeautifulSoup(html_content, "html.parser")
+        # soup = BeautifulSoup(html_content, "html.parser")
 
-        div_messages = soup.find_all("div", class_="tgme_widget_message")
+        # div_messages = soup.find_all("div", class_="tgme_widget_message")
 
-        text_messages = []
+        # text_messages = []
 
-        for div_message in div_messages:
-            try:
-                div_message_info = div_message.find(
-                    "div", class_="tgme_widget_message_info"
-                )
-                time_tag = div_message_info.find("time")
-                datetime_attribute = time_tag["datetime"]
+        # for div_message in div_messages:
+        #     try:
+        #         div_message_info = div_message.find(
+        #             "div", class_="tgme_widget_message_info"
+        #         )
+        #         time_tag = div_message_info.find("time")
+        #         datetime_attribute = time_tag["datetime"]
 
-                datetime_object = datetime.fromisoformat(datetime_attribute)
+        #         datetime_object = datetime.fromisoformat(datetime_attribute)
 
-                div_message_text = div_message.find(
-                    "div", class_="tgme_widget_message_text"
-                )
+        #         div_message_text = div_message.find(
+        #             "div", class_="tgme_widget_message_text"
+        #         )
 
-                text_content = div_message_text.prettify()
+        #         text_content = div_message_text.prettify()
 
-                message_dict = {"text": text_content, "date": datetime_object}
-                text_messages.append(message_dict)
-            except:
-                pass
+        #         message_dict = {"text": text_content, "date": datetime_object}
+        #         text_messages.append(message_dict)
+        #     except:
+        #         pass
+
+        now = datetime.now(timezone.utc)
+        midnight_utc = datetime(
+            now.year, now.month, now.day, 0, 0, 0, tzinfo=timezone.utc
+        )
+
+        fourteen_days_ago = midnight_utc - timedelta(days=14)
+
+        text_messages = download_and_parse(
+            channel=channel, wanted_date=fourteen_days_ago
+        )
 
         text_messages = sorted(text_messages, key=lambda x: x["date"], reverse=True)
-        counter = 0
+
+        # print(text_messages)
+        # exit(0)
+
+        # counter = 0
 
         for text_message in text_messages:
-            now = datetime.now(timezone.utc)
-            midnight_utc = datetime(
-                now.year, now.month, now.day, 0, 0, 0, tzinfo=timezone.utc
-            )
             # if counter > 20 or
             if midnight_utc - text_message["date"] > timedelta(days=14):
                 break

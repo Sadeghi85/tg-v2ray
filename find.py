@@ -34,16 +34,67 @@ def tg_message_time(div_message):
         return (None, None, None)
 
 
-def tg_channel_messages(channel_user):
+def tg_channel_messages(channel, wanted_date=None, before=None, results=None):
+    if results is None:
+        results = []
+
+    if before is None:
+        url = f"https://t.me/s/{channel}"
+    else:
+        url = f"https://t.me/s/{channel}?before={before}"
+
     try:
-        response = requests.get(url=f"https://t.me/s/{channel_user}", timeout=5)
-        soup = BeautifulSoup(response.text, "html.parser")
+        response = requests.get(url=url, timeout=5)
+        response.raise_for_status()
 
-        div_messages = soup.find_all("div", class_="tgme_widget_message")
+        doc = BeautifulSoup(response.text, "html.parser")
 
-        return div_messages
-    except:
-        return None
+        prevPage = doc.find(
+            "a", attrs={"class": "tme_messages_more", "data-before": True}
+        )
+        if prevPage:
+            before = prevPage["data-before"]
+        else:
+            before = None
+
+        div_messages = doc.find_all("div", class_="tgme_widget_message")
+
+        if div_messages:
+            results += div_messages
+            found_date = None
+            for div_message in div_messages:
+                try:
+                    div_message_info = div_message.find(
+                        "div", class_="tgme_widget_message_info"
+                    )
+                    time_tag = div_message_info.find("time")
+                    datetime_attribute = time_tag["datetime"]
+                    datetime_object = datetime.fromisoformat(datetime_attribute)
+
+                    if found_date is None:
+                        found_date = datetime_object
+                        break
+
+                except:
+                    pass
+
+            if before and found_date and wanted_date and found_date > wanted_date:
+                return tg_channel_messages(channel, wanted_date, before, results)
+
+    except Exception as ex:
+        print(ex)
+        pass
+
+    return results
+    # try:
+    #     response = requests.get(url=f"https://t.me/s/{channel_user}", timeout=5)
+    #     soup = BeautifulSoup(response.text, "html.parser")
+
+    #     div_messages = soup.find_all("div", class_="tgme_widget_message")
+
+    #     return div_messages
+    # except:
+    #     return None
 
 
 def tg_message_text(div_message):
@@ -126,12 +177,19 @@ found_channels = list(set(found_channels))
 
 now = datetime.now(timezone.utc)
 midnight_utc = datetime(now.year, now.month, now.day, 0, 0, 0, tzinfo=timezone.utc)
+fourteen_days_ago = midnight_utc - timedelta(days=14)
 
 channel_messages_array = list()
 
 for channel_user in found_channels:
     try:
-        div_messages = tg_channel_messages(channel_user)
+        div_messages = tg_channel_messages(
+            channel=channel_user,
+            wanted_date=fourteen_days_ago,
+        )
+
+        # print(div_messages)
+        # exit(0)
 
         if div_messages is None:
             continue
@@ -206,7 +264,9 @@ new_channel_messages = list()
 
 for channel_user in new_telegram_channels:
     try:
-        div_messages = tg_channel_messages(channel_user)
+        div_messages = tg_channel_messages(
+            channel=channel_user, wanted_date=fourteen_days_ago
+        )
 
         if div_messages is None:
             continue

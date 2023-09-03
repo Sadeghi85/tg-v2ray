@@ -255,22 +255,22 @@ def make_title(array_input, type):
                 )
                 config["params"] = config["params"].strip("&")
 
-                def check_duplicate():
-                    for i, d in enumerate(result):
-                        if (
-                            f"vmess://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
-                            in d["raw"]
-                        ):
-                            if date < d["date"]:
-                                del result[i]
-                                return False
-                            else:
-                                return True
+                # def check_duplicate():
+                #     for i, d in enumerate(result):
+                #         if (
+                #             f"vmess://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                #             in d["raw"]
+                #         ):
+                #             if date < d["date"]:
+                #                 del result[i]
+                #                 return False
+                #             else:
+                #                 return True
 
-                    return False
+                #     return False
 
-                if check_duplicate() == True:
-                    continue
+                # if check_duplicate() == True:
+                #     continue
 
                 config["title"] = f"Vmess | @{config['channel']} | {flag}"
 
@@ -282,6 +282,7 @@ def make_title(array_input, type):
                         "raw": f"vmess://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}",
                         "url": f"vmess://{base64.b64encode(json.dumps(dict_params).encode('utf-8')).decode('utf-8')}",
                         "date": date,
+                        "sort-string": f"vmess://{config['id']}@{config['ip']}:{config['port']}?{config['params']}",
                     }
                 )
 
@@ -395,22 +396,22 @@ def make_title(array_input, type):
                 )
                 config["params"] = config["params"].strip("&")
 
-                def check_duplicate():
-                    for i, d in enumerate(result):
-                        if (
-                            f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
-                            in d["url"]
-                        ):
-                            if date < d["date"]:
-                                del result[i]
-                                return False
-                            else:
-                                return True
+                # def check_duplicate():
+                #     for i, d in enumerate(result):
+                #         if (
+                #             f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                #             in d["url"]
+                #         ):
+                #             if date < d["date"]:
+                #                 del result[i]
+                #                 return False
+                #             else:
+                #                 return True
 
-                    return False
+                #     return False
 
-                if check_duplicate() == True:
-                    continue
+                # if check_duplicate() == True:
+                #     continue
 
                 if type == "reality":
                     config[
@@ -423,6 +424,7 @@ def make_title(array_input, type):
                     {
                         "url": f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}",
                         "date": date,
+                        "sort-string": f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}",
                     }
                 )
 
@@ -534,22 +536,22 @@ def make_title(array_input, type):
                 )
                 config["params"] = config["params"].strip("&")
 
-                def check_duplicate():
-                    for i, d in enumerate(result):
-                        if (
-                            f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
-                            in d["url"]
-                        ):
-                            if date < d["date"]:
-                                del result[i]
-                                return False
-                            else:
-                                return True
+                # def check_duplicate():
+                #     for i, d in enumerate(result):
+                #         if (
+                #             f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                #             in d["url"]
+                #         ):
+                #             if date < d["date"]:
+                #                 del result[i]
+                #                 return False
+                #             else:
+                #                 return True
 
-                    return False
+                #     return False
 
-                if check_duplicate() == True:
-                    continue
+                # if check_duplicate() == True:
+                #     continue
 
                 config["title"] = f"Trojan | @{config['channel']} | {flag}"
 
@@ -557,6 +559,7 @@ def make_title(array_input, type):
                     {
                         "url": f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}#{config['title']}",
                         "date": date,
+                        "sort-string": f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}",
                     }
                 )
 
@@ -652,22 +655,22 @@ def make_title(array_input, type):
                 if is_ipv6(config["ip"]):
                     config["ip"] = f"[{config['ip']}]"
 
-                def check_duplicate():
-                    for i, d in enumerate(result):
-                        if (
-                            f"ss://{config['id']}@{config['ip']}:{config['port']}"
-                            in d["url"]
-                        ):
-                            if date < d["date"]:
-                                del result[i]
-                                return False
-                            else:
-                                return True
+                # def check_duplicate():
+                #     for i, d in enumerate(result):
+                #         if (
+                #             f"ss://{config['id']}@{config['ip']}:{config['port']}"
+                #             in d["url"]
+                #         ):
+                #             if date < d["date"]:
+                #                 del result[i]
+                #                 return False
+                #             else:
+                #                 return True
 
-                    return False
+                #     return False
 
-                if check_duplicate() == True:
-                    continue
+                # if check_duplicate() == True:
+                #     continue
 
                 config["title"] = f"ShadowSocks | @{config['channel']} | {flag}"
 
@@ -675,6 +678,7 @@ def make_title(array_input, type):
                     {
                         "url": f"ss://{config['id']}@{config['ip']}:{config['port']}#{config['title']}",
                         "date": date,
+                        "sort-string": f"ss://{config['id']}@{config['ip']}:{config['port']}",
                     }
                 )
 
@@ -689,8 +693,15 @@ def make_title(array_input, type):
     else:
         return ([], [])
 
-    result_sazman = sorted(result_sazman, key=lambda x: x["date"], reverse=True)
+    result = sorted(result, key=lambda x: x["date"], reverse=False)
+    seen_urls = {}
+    result = [
+        seen_urls.setdefault(item["sort-string"], item)
+        for item in result
+        if item["sort-string"] not in seen_urls
+    ]
 
+    result_sazman = sorted(result_sazman, key=lambda x: x["date"], reverse=False)
     seen_urls = {}
     result_sazman = [
         seen_urls.setdefault(item["sort-string"], item)
