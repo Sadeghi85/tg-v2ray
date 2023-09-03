@@ -216,13 +216,13 @@ for channel in found_channels:
                 [{"url": u, "date": text_message["date"]} for u in matches_reality]
             )
 
-            counter += len(
-                matches_ss
-                + matches_trojan
-                + matches_vmess
-                + matches_vless
-                + matches_reality
-            )
+            # counter += len(
+            #     matches_ss
+            #     + matches_trojan
+            #     + matches_vmess
+            #     + matches_vless
+            #     + matches_reality
+            # )
 
     except Exception as e:
         print("An exception occurred:", e)
