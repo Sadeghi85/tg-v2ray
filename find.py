@@ -97,19 +97,21 @@ def tg_channel_messages(channel, wanted_date=None, before=None, results=None):
     #     return None
 
 
-def tg_message_text(div_message):
+def tg_message_text(div_message, keepUrl=False):
     try:
         div_message_text = div_message.find("div", class_="tgme_widget_message_text")
         text_content = div_message_text.prettify()
-        text_content = re.sub(
-            r"<code>([^<>]+)</code>",
-            r"\1",
-            re.sub(
-                r"<a[^<>]+>([^<>]+)</a>",
+
+        if not keepUrl:
+            text_content = re.sub(
+                r"<code>([^<>]+)</code>",
                 r"\1",
-                re.sub(r"\s*", "", text_content),
-            ),
-        )
+                re.sub(
+                    r"<a[^<>]+>([^<>]+)</a>",
+                    r"\1",
+                    re.sub(r"\s*", "", text_content),
+                ),
+            )
 
         return text_content
     except:
@@ -183,10 +185,7 @@ channel_messages_array = list()
 
 for channel_user in found_channels:
     try:
-        div_messages = tg_channel_messages(
-            channel=channel_user,
-            wanted_date=fourteen_days_ago,
-        )
+        div_messages = tg_channel_messages(channel=channel_user)
 
         # print(div_messages)
         # exit(0)
@@ -217,7 +216,7 @@ array_url = set()
 
 for channel_user, message in channel_messages_array:
     try:
-        text_content = tg_message_text(message)
+        text_content = tg_message_text(div_message=message, keepUrl=True)
 
         if text_content is None:
             continue
@@ -232,7 +231,9 @@ for channel_user, message in channel_messages_array:
             matches_reality,
         ) = find_matches(text_content)
 
-        array_username.update([element.lower() for element in matches_username])
+        array_username.update(
+            [element.lower() for element in matches_username if len(element) >= 5]
+        )
         array_url.update(matches_url)
 
     except:
@@ -244,11 +245,11 @@ for url in array_url:
     try:
         tg_user = tg_username_extract(url)
 
-        if tg_user is None:
+        if tg_user is None or len(tg_user) < 5:
             continue
 
         # print(tg_user + "\n")
-        if tg_user not in ["proxy", "img", "emoji", "joinchat", "s"]:
+        if tg_user not in ["proxy", "img", "emoji", "joinchat"]:
             tg_username_list.add(tg_user.lower())
     except Exception as ex:
         print(ex)
