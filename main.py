@@ -15,6 +15,9 @@ def download_and_parse(channel, wanted_date=None, before=None, results=None):
     if results is None:
         results = []
 
+    if len(results) > 100:
+        return results
+
     if before is None:
         url = f"https://t.me/s/{channel}"
     else:
@@ -29,8 +32,12 @@ def download_and_parse(channel, wanted_date=None, before=None, results=None):
         prevPage = doc.find(
             "a", attrs={"class": "tme_messages_more", "data-before": True}
         )
-        if prevPage:
-            before = prevPage["data-before"]
+
+        if before and prevPage:
+            if int(prevPage["data-before"]) < int(before):
+                before = prevPage["data-before"]
+            else:
+                before = None
         else:
             before = None
 
@@ -127,11 +134,10 @@ for channel in found_channels:
             now.year, now.month, now.day, 0, 0, 0, tzinfo=timezone.utc
         )
 
-        fourteen_days_ago = midnight_utc - timedelta(days=14)
+        x_days = 7
+        x_days_ago = midnight_utc - timedelta(days=x_days)
 
-        text_messages = download_and_parse(
-            channel=channel, wanted_date=fourteen_days_ago
-        )
+        text_messages = download_and_parse(channel=channel, wanted_date=x_days_ago)
 
         text_messages = sorted(text_messages, key=lambda x: x["date"], reverse=True)
 
@@ -142,7 +148,7 @@ for channel in found_channels:
 
         for text_message in text_messages:
             # if counter > 20 or
-            if midnight_utc - text_message["date"] > timedelta(days=14):
+            if midnight_utc - text_message["date"] > timedelta(days=x_days):
                 break
 
             print(f"{channel} | {text_message['date']}\n")

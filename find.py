@@ -38,6 +38,9 @@ def tg_channel_messages(channel, wanted_date=None, before=None, results=None):
     if results is None:
         results = []
 
+    if len(results) > 100:
+        return results
+
     if before is None:
         url = f"https://t.me/s/{channel}"
     else:
@@ -52,8 +55,12 @@ def tg_channel_messages(channel, wanted_date=None, before=None, results=None):
         prevPage = doc.find(
             "a", attrs={"class": "tme_messages_more", "data-before": True}
         )
-        if prevPage:
-            before = prevPage["data-before"]
+
+        if before and prevPage:
+            if int(prevPage["data-before"]) < int(before):
+                before = prevPage["data-before"]
+            else:
+                before = None
         else:
             before = None
 
@@ -179,7 +186,8 @@ found_channels = list(set(found_channels))
 
 now = datetime.now(timezone.utc)
 midnight_utc = datetime(now.year, now.month, now.day, 0, 0, 0, tzinfo=timezone.utc)
-fourteen_days_ago = midnight_utc - timedelta(days=14)
+x_days = 7
+x_days_ago = midnight_utc - timedelta(days=x_days)
 
 channel_messages_array = list()
 
@@ -201,7 +209,7 @@ for channel_user in found_channels:
             if datetime_object is None:
                 continue
 
-            if midnight_utc - datetime_object < timedelta(days=14):
+            if midnight_utc - datetime_object < timedelta(days=x_days):
                 # print(
                 #     datetime_object.strftime("%Y-%m-%d %H:%M:%S")
                 #     + ": \n"
@@ -265,9 +273,7 @@ new_channel_messages = list()
 
 for channel_user in new_telegram_channels:
     try:
-        div_messages = tg_channel_messages(
-            channel=channel_user, wanted_date=fourteen_days_ago
-        )
+        div_messages = tg_channel_messages(channel=channel_user, wanted_date=x_days_ago)
 
         if div_messages is None:
             continue
@@ -280,7 +286,7 @@ for channel_user in new_telegram_channels:
             if datetime_object is None:
                 continue
 
-            if midnight_utc - datetime_object < timedelta(days=14):
+            if midnight_utc - datetime_object < timedelta(days=x_days):
                 new_channel_messages.append((channel_user, div_message))
     except:
         continue
