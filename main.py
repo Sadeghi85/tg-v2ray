@@ -134,7 +134,7 @@ for channel in found_channels:
             now.year, now.month, now.day, 0, 0, 0, tzinfo=timezone.utc
         )
 
-        x_days = 7
+        x_days = 14
         x_days_ago = midnight_utc - timedelta(days=x_days)
 
         text_messages = download_and_parse(channel=channel, wanted_date=x_days_ago)

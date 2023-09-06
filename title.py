@@ -224,7 +224,7 @@ def make_title(array_input, type):
 
             if dict_params.get("sni", "") != "":
                 if not re.match(
-                    r"[a-zA-Z0-9\.-]+", dict_params["sni"], flags=re.IGNORECASE
+                    r"[a-zA-Z0-9\._-]+", dict_params["sni"], flags=re.IGNORECASE
                 ):
                     with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
                         file.write(f"{url}\n")
@@ -298,7 +298,7 @@ def make_title(array_input, type):
 
     elif type == "reality" or type == "vless":
         for dict in array_input:
-            pattern = r"vless://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)?"
+            pattern = r"vless://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:_-]+?)\]?:(?P<port>[0-9]+)/?\?(?P<params>[^#]+)#?(?P<channel>(?<=#).*)?"
 
             url = dict["url"]
             date = dict["date"]
@@ -365,7 +365,7 @@ def make_title(array_input, type):
 
             if dict_params.get("sni", "") != "":
                 if not re.match(
-                    r"[a-zA-Z0-9\.-]+", dict_params["sni"], flags=re.IGNORECASE
+                    r"[a-zA-Z0-9\._-]+", dict_params["sni"], flags=re.IGNORECASE
                 ):
                     with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
                         file.write(f"{url}\n")
@@ -438,7 +438,7 @@ def make_title(array_input, type):
                     )
     elif type == "trojan":
         for dict in array_input:
-            pattern = r"trojan://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?\??(?P<params>[^#]+)?#?(?P<channel>(?<=#).*)?"
+            pattern = r"trojan://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:_-]+?)\]?:(?P<port>[0-9]+)/?\??(?P<params>[^#]+)?#?(?P<channel>(?<=#).*)?"
 
             url = dict["url"]
             date = dict["date"]
@@ -505,7 +505,7 @@ def make_title(array_input, type):
 
             if dict_params.get("sni", "") != "":
                 if not re.match(
-                    r"[a-zA-Z0-9\.-]+", dict_params["sni"], flags=re.IGNORECASE
+                    r"[a-zA-Z0-9\._-]+", dict_params["sni"], flags=re.IGNORECASE
                 ):
                     with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
                         file.write(f"{url}\n")
@@ -573,7 +573,7 @@ def make_title(array_input, type):
                     )
     elif type == "ss":
         for dict in array_input:
-            pattern = r"ss://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)/?#?(?P<channel>(?<=#).*)?"
+            pattern = r"ss://(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:_-]+?)\]?:(?P<port>[0-9]+)/?#?(?P<channel>(?<=#).*)?"
 
             url = dict["url"]
             date = dict["date"]
@@ -610,7 +610,7 @@ def make_title(array_input, type):
 
             if config["ip"] == "":
                 pattern = (
-                    r"(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:-]+?)\]?:(?P<port>[0-9]+)"
+                    r"(?P<id>[^@]+)@\[?(?P<ip>[a-zA-Z0-9\.:_-]+?)\]?:(?P<port>[0-9]+)"
                 )
 
                 match = re.match(

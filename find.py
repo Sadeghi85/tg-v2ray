@@ -186,14 +186,14 @@ found_channels = list(set(found_channels))
 
 now = datetime.now(timezone.utc)
 midnight_utc = datetime(now.year, now.month, now.day, 0, 0, 0, tzinfo=timezone.utc)
-x_days = 7
+x_days = 14
 x_days_ago = midnight_utc - timedelta(days=x_days)
 
 channel_messages_array = list()
 
 for channel_user in found_channels:
     try:
-        div_messages = tg_channel_messages(channel=channel_user)
+        div_messages = tg_channel_messages(channel=channel_user, wanted_date=x_days_ago)
 
         # print(div_messages)
         # exit(0)
@@ -232,11 +232,11 @@ for channel_user, message in channel_messages_array:
         (
             matches_username,
             matches_url,
-            matches_shadowsocks,
-            matches_trojan,
-            matches_vmess,
-            matches_vless,
-            matches_reality,
+            _,
+            _,
+            _,
+            _,
+            _,
         ) = find_matches(text_content)
 
         array_username.update(
@@ -304,8 +304,8 @@ for channel, messages in new_channel_messages:
                 continue
 
             (
-                matches_username,
-                matches_url,
+                _,
+                _,
                 matches_shadowsocks,
                 matches_trojan,
                 matches_vmess,
