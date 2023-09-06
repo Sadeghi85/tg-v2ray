@@ -8,7 +8,7 @@ from urllib.parse import urlparse
 import html
 import traceback
 import random
-from title import make_title
+from title import make_title, is_valid_base64
 
 
 def download_and_parse(channel, wanted_date=None, before=None, results=None):
@@ -96,39 +96,10 @@ with open("found_channels.json") as file:
 
 found_channels = list(set(found_channels))
 
+found_channels.append("soroushmirzaei")
+
 for channel in found_channels:
     try:
-        # url = "https://t.me/s/" + channel
-        # response = requests.get(url=url, timeout=5)
-        # html_content = response.text
-
-        # soup = BeautifulSoup(html_content, "html.parser")
-
-        # div_messages = soup.find_all("div", class_="tgme_widget_message")
-
-        # text_messages = []
-
-        # for div_message in div_messages:
-        #     try:
-        #         div_message_info = div_message.find(
-        #             "div", class_="tgme_widget_message_info"
-        #         )
-        #         time_tag = div_message_info.find("time")
-        #         datetime_attribute = time_tag["datetime"]
-
-        #         datetime_object = datetime.fromisoformat(datetime_attribute)
-
-        #         div_message_text = div_message.find(
-        #             "div", class_="tgme_widget_message_text"
-        #         )
-
-        #         text_content = div_message_text.prettify()
-
-        #         message_dict = {"text": text_content, "date": datetime_object}
-        #         text_messages.append(message_dict)
-        #     except:
-        #         pass
-
         now = datetime.now(timezone.utc)
         midnight_utc = datetime(
             now.year, now.month, now.day, 0, 0, 0, tzinfo=timezone.utc
@@ -137,12 +108,62 @@ for channel in found_channels:
         x_days = 14
         x_days_ago = midnight_utc - timedelta(days=x_days)
 
-        text_messages = download_and_parse(channel=channel, wanted_date=x_days_ago)
+        if channel == "soroushmirzaei":
+            text_messages = []
 
-        text_messages = sorted(text_messages, key=lambda x: x["date"], reverse=True)
+            try:
+                text_message = ""
 
-        # print(text_messages)
-        # exit(0)
+                response = requests.get(
+                    url="https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/splitted/mixed",
+                    timeout=5,
+                )
+                response.raise_for_status()
+
+                json_string = response.text
+                json_string += "=" * ((4 - len(json_string) % 4) % 4)
+
+                if is_valid_base64(json_string):
+                    text_message = base64.b64decode(json_string).decode(
+                        encoding="utf-8", errors="ignore"
+                    )
+
+                text_message = re.sub(r"\n", "<br>", text_message)
+
+                text_messages.append({"text": text_message, "date": now})
+            except:
+                pass
+
+            try:
+                text_message = ""
+
+                response = requests.get(
+                    url="https://raw.githubusercontent.com/soroushmirzaei/telegram-configs-collector/main/splitted/subscribe",
+                    timeout=5,
+                )
+                response.raise_for_status()
+
+                json_string = response.text
+                json_string += "=" * ((4 - len(json_string) % 4) % 4)
+
+                if is_valid_base64(json_string):
+                    text_message = base64.b64decode(json_string).decode(
+                        encoding="utf-8", errors="ignore"
+                    )
+
+                text_message = re.sub(r"\n", "<br>", text_message)
+
+                text_messages.append({"text": text_message, "date": now})
+            except:
+                pass
+
+        else:
+            text_messages = download_and_parse(channel=channel, wanted_date=x_days_ago)
+
+            text_messages = sorted(text_messages, key=lambda x: x["date"], reverse=True)
+
+            # print(text_messages)
+            # exit(0)
 
         # counter = 0
 
