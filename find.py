@@ -38,7 +38,7 @@ def tg_channel_messages(channel, wanted_date=None, before=None, results=None):
     if results is None:
         results = []
 
-    if len(results) > 100:
+    if len(results) > 1000:
         return results
 
     if before is None:
@@ -186,7 +186,7 @@ found_channels = list(set(found_channels))
 
 now = datetime.now(timezone.utc)
 midnight_utc = datetime(now.year, now.month, now.day, 0, 0, 0, tzinfo=timezone.utc)
-x_days = 14
+x_days = 7
 x_days_ago = midnight_utc - timedelta(days=x_days)
 
 channel_messages_array = list()
