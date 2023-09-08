@@ -201,6 +201,8 @@ for channel_user in found_channels:
         if div_messages is None:
             continue
 
+        print(f"{channel_user}\n")
+
         for div_message in div_messages:
             datetime_object, datetime_now, delta_datetime_now = tg_message_time(
                 div_message
@@ -267,6 +269,8 @@ tg_username_list.update(array_username)
 
 tg_username_list.update(found_channels)
 
+print(f"\n======new channels: {len(tg_username_list)}============\n")
+
 new_telegram_channels = tg_username_list
 
 new_channel_messages = list()
@@ -277,6 +281,8 @@ for channel_user in new_telegram_channels:
 
         if div_messages is None:
             continue
+
+        print(f"{channel_user}\n")
 
         for div_message in div_messages:
             datetime_object, datetime_now, delta_datetime_now = tg_message_time(
@@ -331,7 +337,7 @@ for channel, messages in new_channel_messages:
 
 found_channels = sorted(list(new_array_channels))
 
-# print(found_channels)
+print(f"\ngood channels found:\n{found_channels}\n")
 
 with open("./found_channels.json", "w") as telegram_channels_file:
     json.dump(found_channels, telegram_channels_file, indent=4)
