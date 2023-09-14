@@ -292,7 +292,7 @@ for channel_user in new_telegram_channels:
             if datetime_object is None:
                 continue
 
-            if midnight_utc - datetime_object < timedelta(days=x_days):
+            if datetime_object > x_days_ago:
                 new_channel_messages.append((channel_user, div_message))
     except:
         continue
@@ -300,9 +300,9 @@ for channel_user in new_telegram_channels:
 new_array_channels = set()
 
 for channel, messages in new_channel_messages:
-    total_config = 0
-
     for message in messages:
+        total_config = 0
+
         try:
             text_content = tg_message_text(message)
 
@@ -320,8 +320,7 @@ for channel, messages in new_channel_messages:
             ) = find_matches(text_content)
 
             total_config = (
-                total_config
-                + len(matches_shadowsocks)
+                len(matches_shadowsocks)
                 + len(matches_trojan)
                 + len(matches_vmess)
                 + len(matches_vless)
