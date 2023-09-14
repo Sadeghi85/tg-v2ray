@@ -38,6 +38,8 @@ def download_and_parse(channel, wanted_date=None, before=None, results=None):
                 before = prevPage["data-before"]
             else:
                 before = None
+        elif prevPage:
+            before = prevPage["data-before"]
         else:
             before = None
 

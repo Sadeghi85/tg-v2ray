@@ -61,6 +61,8 @@ def tg_channel_messages(channel, wanted_date=None, before=None, results=None):
                 before = prevPage["data-before"]
             else:
                 before = None
+        elif prevPage:
+            before = prevPage["data-before"]
         else:
             before = None
 
@@ -211,7 +213,7 @@ for channel_user in found_channels:
             if datetime_object is None:
                 continue
 
-            if midnight_utc - datetime_object < timedelta(days=x_days):
+            if datetime_object > x_days_ago:
                 # print(
                 #     datetime_object.strftime("%Y-%m-%d %H:%M:%S")
                 #     + ": \n"
