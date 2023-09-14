@@ -331,9 +331,9 @@ for channel, messages in new_channel_messages:
         except:
             continue
 
-    # print(total_config)
-    if total_config > 0:
-        new_array_channels.add(channel)
+        # print(total_config)
+        if total_config > 0:
+            new_array_channels.add(channel)
 
 found_channels = sorted(list(new_array_channels))
 
