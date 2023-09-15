@@ -11,6 +11,23 @@ import base64
 import geoip2.database
 import json
 from dns import resolver, rdatatype
+import binascii
+
+
+def generate_crc32(input_string):
+    # Calculate the CRC32 checksum of the input string
+    crc32_value = binascii.crc32(input_string.encode("utf-8"))
+
+    # Ensure the result is a positive integer
+    if crc32_value < 0:
+        crc32_value += 2**32
+
+    # Convert the integer to a hexadecimal string
+    crc32_hex = format(
+        crc32_value, "08x"
+    )  # '08x' ensures the result is 8 characters long
+
+    return crc32_hex
 
 
 def is_valid_base64(s):
@@ -224,7 +241,7 @@ def make_title(array_input, type):
 
             if dict_params.get("sni", "") != "":
                 if not re.match(
-                    r"[a-zA-Z0-9\._-]+", dict_params["sni"], flags=re.IGNORECASE
+                    r"^[a-zA-Z0-9\._-]+$", dict_params["sni"], flags=re.IGNORECASE
                 ):
                     with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
                         file.write(f"{url}\n")
@@ -272,7 +289,13 @@ def make_title(array_input, type):
                 # if check_duplicate() == True:
                 #     continue
 
-                config["title"] = f"Vmess | @{config['channel']} | {flag}"
+                config["title"] = (
+                    f"Vmess | @{config['channel']} | {flag}"
+                    + " _"
+                    + generate_crc32(
+                        f"vmess://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                    )
+                )
 
                 dict_params["add"] = config["ip"]
                 dict_params["ps"] = config["title"]
@@ -365,7 +388,7 @@ def make_title(array_input, type):
 
             if dict_params.get("sni", "") != "":
                 if not re.match(
-                    r"[a-zA-Z0-9\._-]+", dict_params["sni"], flags=re.IGNORECASE
+                    r"^[a-zA-Z0-9\._-]+$", dict_params["sni"], flags=re.IGNORECASE
                 ):
                     with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
                         file.write(f"{url}\n")
@@ -414,11 +437,21 @@ def make_title(array_input, type):
                 #     continue
 
                 if type == "reality":
-                    config[
-                        "title"
-                    ] = f"Reality | {dict_params.get('sni', '')} | @{config['channel']} | {flag}"
+                    config["title"] = (
+                        f"Reality | {dict_params.get('sni', '')} | @{config['channel']} | {flag}"
+                        + " _"
+                        + generate_crc32(
+                            f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                        )
+                    )
                 else:
-                    config["title"] = f"Vless | @{config['channel']} | {flag}"
+                    config["title"] = (
+                        f"Vless | @{config['channel']} | {flag}"
+                        + " _"
+                        + generate_crc32(
+                            f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                        )
+                    )
 
                 result.append(
                     {
@@ -505,7 +538,7 @@ def make_title(array_input, type):
 
             if dict_params.get("sni", "") != "":
                 if not re.match(
-                    r"[a-zA-Z0-9\._-]+", dict_params["sni"], flags=re.IGNORECASE
+                    r"^[a-zA-Z0-9\._-]+$", dict_params["sni"], flags=re.IGNORECASE
                 ):
                     with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
                         file.write(f"{url}\n")
@@ -553,7 +586,13 @@ def make_title(array_input, type):
                 # if check_duplicate() == True:
                 #     continue
 
-                config["title"] = f"Trojan | @{config['channel']} | {flag}"
+                config["title"] = (
+                    f"Trojan | @{config['channel']} | {flag}"
+                    + " _"
+                    + generate_crc32(
+                        f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                    )
+                )
 
                 result.append(
                     {
@@ -672,7 +711,13 @@ def make_title(array_input, type):
                 # if check_duplicate() == True:
                 #     continue
 
-                config["title"] = f"ShadowSocks | @{config['channel']} | {flag}"
+                config["title"] = (
+                    f"ShadowSocks | @{config['channel']} | {flag}"
+                    + " _"
+                    + generate_crc32(
+                        f"ss://{config['id']}@{config['ip']}:{config['port']}"
+                    )
+                )
 
                 result.append(
                     {

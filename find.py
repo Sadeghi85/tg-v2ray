@@ -38,7 +38,7 @@ def tg_channel_messages(channel, wanted_date=None, before=None, results=None):
     if results is None:
         results = []
 
-    if len(results) > 1000:
+    if len(results) > 100:
         return results
 
     if before is None:

@@ -15,7 +15,7 @@ def download_and_parse(channel, wanted_date=None, before=None, results=None):
     if results is None:
         results = []
 
-    if len(results) > 1000:
+    if len(results) > 100:
         return results
 
     if before is None:
@@ -98,7 +98,7 @@ with open("found_channels.json") as file:
 
 found_channels = list(set(found_channels))
 
-found_channels.append("soroushmirzaei")
+# found_channels.append("soroushmirzaei")
 
 for channel in found_channels:
     try:
