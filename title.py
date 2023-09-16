@@ -225,6 +225,14 @@ def make_title(array_input, type):
                 print("no ip\n")
                 continue
 
+            if dict_params.get("sni", "") != "":
+                if not re.match(
+                    r"^[a-zA-Z0-9\._-]+$", dict_params["sni"], flags=re.IGNORECASE
+                ):
+                    dict_params["sni"] = ""
+                else:
+                    dict_params["sni"] = str(dict_params["sni"]).lower()
+
             if (
                 dict_params.get("tls", "") in ["tls"]
                 and dict_params.get("sni", "") == ""
@@ -238,15 +246,6 @@ def make_title(array_input, type):
                 and dict_params.get("sni", "") == ""
             ):
                 continue
-
-            if dict_params.get("sni", "") != "":
-                if not re.match(
-                    r"^[a-zA-Z0-9\._-]+$", dict_params["sni"], flags=re.IGNORECASE
-                ):
-                    with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
-                        file.write(f"{url}\n")
-                    continue
-                dict_params["sni"] = str(dict_params["sni"]).lower()
 
             for ip in ips:
                 config["ip"] = ip
@@ -372,6 +371,14 @@ def make_title(array_input, type):
                 except:
                     pass
 
+            if dict_params.get("sni", "") != "":
+                if not re.match(
+                    r"^[a-zA-Z0-9\._-]+$", dict_params["sni"], flags=re.IGNORECASE
+                ):
+                    dict_params["sni"] = ""
+                else:
+                    dict_params["sni"] = str(dict_params["sni"]).lower()
+
             if (
                 dict_params.get("security", "") in ["reality", "tls"]
                 and dict_params.get("sni", "") == ""
@@ -385,15 +392,6 @@ def make_title(array_input, type):
                 and dict_params.get("sni", "") == ""
             ):
                 continue
-
-            if dict_params.get("sni", "") != "":
-                if not re.match(
-                    r"^[a-zA-Z0-9\._-]+$", dict_params["sni"], flags=re.IGNORECASE
-                ):
-                    with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
-                        file.write(f"{url}\n")
-                    continue
-                dict_params["sni"] = str(dict_params["sni"]).lower()
 
             for ip in ips:
                 config["ip"] = ip
@@ -522,6 +520,14 @@ def make_title(array_input, type):
                 except:
                     pass
 
+            if dict_params.get("sni", "") != "":
+                if not re.match(
+                    r"^[a-zA-Z0-9\._-]+$", dict_params["sni"], flags=re.IGNORECASE
+                ):
+                    dict_params["sni"] = ""
+                else:
+                    dict_params["sni"] = str(dict_params["sni"]).lower()
+
             if (
                 dict_params.get("security", "") in ["reality", "tls"]
                 and dict_params.get("sni", "") == ""
@@ -535,15 +541,6 @@ def make_title(array_input, type):
                 and dict_params.get("sni", "") == ""
             ):
                 continue
-
-            if dict_params.get("sni", "") != "":
-                if not re.match(
-                    r"^[a-zA-Z0-9\._-]+$", dict_params["sni"], flags=re.IGNORECASE
-                ):
-                    with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
-                        file.write(f"{url}\n")
-                    continue
-                dict_params["sni"] = str(dict_params["sni"]).lower()
 
             for ip in ips:
                 config["ip"] = ip
