@@ -268,7 +268,7 @@ def make_title(array_input, type):
                 and dict_params.get("sni", "") == ""
                 and is_valid_domain(config["host"])
             ):
-                dict_params["sni"] = config["host"]
+                dict_params["sni"] = str(config["host"]).lower()
                 dict_params["allowInsecure"] = 1
 
             if (
@@ -416,7 +416,7 @@ def make_title(array_input, type):
                 and dict_params.get("sni", "") == ""
                 and is_valid_domain(config["host"])
             ):
-                dict_params["sni"] = config["host"]
+                dict_params["sni"] = str(config["host"]).lower()
                 dict_params["allowInsecure"] = 1
 
             if (
@@ -569,7 +569,7 @@ def make_title(array_input, type):
                 and dict_params.get("sni", "") == ""
                 and is_valid_domain(config["host"])
             ):
-                dict_params["sni"] = config["host"]
+                dict_params["sni"] = str(config["host"]).lower()
                 dict_params["allowInsecure"] = 1
 
             if (
