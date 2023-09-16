@@ -14,6 +14,36 @@ from dns import resolver, rdatatype
 import binascii
 
 
+def superscript_string(input_string):
+    # Define a dictionary mapping regular characters to their superscript equivalents
+    superscript_chars = {
+        "0": "⁰",
+        "1": "¹",
+        "2": "²",
+        "3": "³",
+        "4": "⁴",
+        "5": "⁵",
+        "6": "⁶",
+        "7": "⁷",
+        "8": "⁸",
+        "9": "⁹",
+        "a": "ᵃ",
+        "b": "ᵇ",
+        "c": "ᶜ",
+        "d": "ᵈ",
+        "e": "ᵉ",
+        "f": "ᶠ",
+        # Add more characters as needed
+    }
+
+    # Convert the input string to its superscript representation
+    superscript_text = "".join(
+        superscript_chars.get(char, char) for char in input_string
+    )
+
+    return superscript_text
+
+
 def generate_crc32(input_string):
     # Calculate the CRC32 checksum of the input string
     crc32_value = binascii.crc32(input_string.encode("utf-8"))
@@ -290,9 +320,11 @@ def make_title(array_input, type):
 
                 config["title"] = (
                     f"Vmess | @{config['channel']} | {flag}"
-                    + " _"
-                    + generate_crc32(
-                        f"vmess://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                    + "   "
+                    + superscript_string(
+                        generate_crc32(
+                            f"vmess://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                        )
                     )
                 )
 
@@ -437,17 +469,21 @@ def make_title(array_input, type):
                 if type == "reality":
                     config["title"] = (
                         f"Reality | {dict_params.get('sni', '')} | @{config['channel']} | {flag}"
-                        + " _"
-                        + generate_crc32(
-                            f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                        + "   "
+                        + superscript_string(
+                            generate_crc32(
+                                f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                            )
                         )
                     )
                 else:
                     config["title"] = (
                         f"Vless | @{config['channel']} | {flag}"
-                        + " _"
-                        + generate_crc32(
-                            f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                        + "   "
+                        + superscript_string(
+                            generate_crc32(
+                                f"vless://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                            )
                         )
                     )
 
@@ -585,9 +621,11 @@ def make_title(array_input, type):
 
                 config["title"] = (
                     f"Trojan | @{config['channel']} | {flag}"
-                    + " _"
-                    + generate_crc32(
-                        f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                    + "   "
+                    + superscript_string(
+                        generate_crc32(
+                            f"trojan://{config['id']}@{config['ip']}:{config['port']}?{config['params']}"
+                        )
                     )
                 )
 
@@ -710,9 +748,11 @@ def make_title(array_input, type):
 
                 config["title"] = (
                     f"ShadowSocks | @{config['channel']} | {flag}"
-                    + " _"
-                    + generate_crc32(
-                        f"ss://{config['id']}@{config['ip']}:{config['port']}"
+                    + "   "
+                    + superscript_string(
+                        generate_crc32(
+                            f"ss://{config['id']}@{config['ip']}:{config['port']}"
+                        )
                     )
                 )
 
