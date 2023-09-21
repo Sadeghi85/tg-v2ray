@@ -230,8 +230,21 @@ def make_title(array_input, type):
             dict_params = {}
 
             try:
-                dict_params = json.loads(json_string)
-                dict_params = {k.lower(): v for k, v in dict_params.items()}
+                json_params = json.loads(json_string)
+
+                for k, v in json_params.items():
+                    key = re.sub(
+                        r"servicename",
+                        "serviceName",
+                        re.sub(
+                            r"headertype",
+                            "headerType",
+                            re.sub(r"allowinsecure", "allowInsecure", k.lower()),
+                        ),
+                    )
+                    dict_params[key] = v
+
+                # dict_params = {k.lower(): v for k, v in json_params.items()}
             except:
                 with open("./generated/nomatch.txt", "a", encoding="utf-8") as file:
                     file.write(f"{url}\n")
@@ -255,6 +268,9 @@ def make_title(array_input, type):
                 print("no ip\n")
                 continue
 
+            if dict_params.get("allowInsecure", "") != "":
+                continue
+
             if dict_params.get("sni", "") != "":
                 if not re.match(
                     r"^[a-zA-Z0-9\._-]+$", dict_params["sni"], flags=re.IGNORECASE
@@ -269,7 +285,6 @@ def make_title(array_input, type):
                 and is_valid_domain(config["host"])
             ):
                 dict_params["sni"] = str(config["host"]).lower()
-                dict_params["allowInsecure"] = 1
 
             if (
                 dict_params.get("tls", "") in ["tls"]
@@ -403,6 +418,9 @@ def make_title(array_input, type):
                 except:
                     pass
 
+            if dict_params.get("allowInsecure", "") != "":
+                continue
+
             if dict_params.get("sni", "") != "":
                 if not re.match(
                     r"^[a-zA-Z0-9\._-]+$", dict_params["sni"], flags=re.IGNORECASE
@@ -417,7 +435,6 @@ def make_title(array_input, type):
                 and is_valid_domain(config["host"])
             ):
                 dict_params["sni"] = str(config["host"]).lower()
-                dict_params["allowInsecure"] = 1
 
             if (
                 dict_params.get("security", "") in ["reality", "tls"]
@@ -556,6 +573,9 @@ def make_title(array_input, type):
                 except:
                     pass
 
+            if dict_params.get("allowInsecure", "") != "":
+                continue
+
             if dict_params.get("sni", "") != "":
                 if not re.match(
                     r"^[a-zA-Z0-9\._-]+$", dict_params["sni"], flags=re.IGNORECASE
@@ -570,7 +590,6 @@ def make_title(array_input, type):
                 and is_valid_domain(config["host"])
             ):
                 dict_params["sni"] = str(config["host"]).lower()
-                dict_params["allowInsecure"] = 1
 
             if (
                 dict_params.get("security", "") in ["reality", "tls"]
@@ -782,6 +801,7 @@ def make_title(array_input, type):
         for item in result
         if item["sort-string"] not in seen_urls
     ]
+    result = sorted(result, key=lambda x: x["date"], reverse=True)
 
     result_sazman = sorted(result_sazman, key=lambda x: x["date"], reverse=False)
     seen_urls = {}
@@ -790,5 +810,6 @@ def make_title(array_input, type):
         for item in result_sazman
         if item["sort-string"] not in seen_urls
     ]
+    result_sazman = sorted(result_sazman, key=lambda x: x["date"], reverse=True)
 
     return ([d["url"] for d in result], [d["url"] for d in result_sazman])
