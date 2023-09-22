@@ -75,7 +75,7 @@ def is_valid_domain(hostname):
     # Extract the TLD, domain, and subdomain from the hostname
     ext = tldextract.extract(hostname)
     # Check if the domain and TLD are not empty
-    return ext.domain != "" and ext.suffix != ""
+    return ext.domain != "" and ext.suffix != "" and hostname == ".".join(ext[:3])
 
 
 def is_valid_ip_address(ip):
