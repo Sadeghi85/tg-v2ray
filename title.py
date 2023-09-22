@@ -268,28 +268,16 @@ def make_title(array_input, type):
                 print("no ip\n")
                 continue
 
-            if dict_params.get("allowInsecure", "") != "":
+            if dict_params.get("allowInsecure", "0") != "0":
                 continue
 
             if dict_params.get("sni", "") != "":
-                if not re.match(
-                    r"^[a-zA-Z0-9\._-]+$", dict_params["sni"], flags=re.IGNORECASE
-                ):
+                if not is_valid_domain(dict_params["sni"]):
                     dict_params["sni"] = ""
                 else:
                     dict_params["sni"] = str(dict_params["sni"]).lower()
 
-            if (
-                dict_params.get("tls", "") in ["tls"]
-                and dict_params.get("sni", "") == ""
-                and is_valid_domain(config["host"])
-            ):
-                dict_params["sni"] = str(config["host"]).lower()
-
-            if (
-                dict_params.get("tls", "") in ["tls"]
-                and dict_params.get("sni", "") == ""
-            ):
+            if dict_params.get("sni", "") == "":
                 continue
 
             for ip in ips:
@@ -418,28 +406,16 @@ def make_title(array_input, type):
                 except:
                     pass
 
-            if dict_params.get("allowInsecure", "") != "":
+            if dict_params.get("allowInsecure", "0") != "0":
                 continue
 
             if dict_params.get("sni", "") != "":
-                if not re.match(
-                    r"^[a-zA-Z0-9\._-]+$", dict_params["sni"], flags=re.IGNORECASE
-                ):
+                if not is_valid_domain(dict_params["sni"]):
                     dict_params["sni"] = ""
                 else:
                     dict_params["sni"] = str(dict_params["sni"]).lower()
 
-            if (
-                dict_params.get("security", "") in ["reality", "tls"]
-                and dict_params.get("sni", "") == ""
-                and is_valid_domain(config["host"])
-            ):
-                dict_params["sni"] = str(config["host"]).lower()
-
-            if (
-                dict_params.get("security", "") in ["reality", "tls"]
-                and dict_params.get("sni", "") == ""
-            ):
+            if dict_params.get("sni", "") == "":
                 continue
 
             for ip in ips:
@@ -573,28 +549,16 @@ def make_title(array_input, type):
                 except:
                     pass
 
-            if dict_params.get("allowInsecure", "") != "":
+            if dict_params.get("allowInsecure", "0") != "0":
                 continue
 
             if dict_params.get("sni", "") != "":
-                if not re.match(
-                    r"^[a-zA-Z0-9\._-]+$", dict_params["sni"], flags=re.IGNORECASE
-                ):
+                if not is_valid_domain(dict_params["sni"]):
                     dict_params["sni"] = ""
                 else:
                     dict_params["sni"] = str(dict_params["sni"]).lower()
 
-            if (
-                dict_params.get("security", "") in ["reality", "tls"]
-                and dict_params.get("sni", "") == ""
-                and is_valid_domain(config["host"])
-            ):
-                dict_params["sni"] = str(config["host"]).lower()
-
-            if (
-                dict_params.get("security", "") in ["reality", "tls"]
-                and dict_params.get("sni", "") == ""
-            ):
+            if dict_params.get("sni", "") == "":
                 continue
 
             for ip in ips:
@@ -801,7 +765,7 @@ def make_title(array_input, type):
         for item in result
         if item["sort-string"] not in seen_urls
     ]
-    result = sorted(result, key=lambda x: x["date"], reverse=True)
+    # result = sorted(result, key=lambda x: x["date"], reverse=True)
 
     result_sazman = sorted(result_sazman, key=lambda x: x["date"], reverse=False)
     seen_urls = {}
@@ -810,6 +774,7 @@ def make_title(array_input, type):
         for item in result_sazman
         if item["sort-string"] not in seen_urls
     ]
-    result_sazman = sorted(result_sazman, key=lambda x: x["date"], reverse=True)
+    # result_sazman = sorted(result_sazman, key=lambda x: x["date"], reverse=True)
 
-    return ([d["url"] for d in result], [d["url"] for d in result_sazman])
+    # return ([d["url"] for d in result], [d["url"] for d in result_sazman])
+    return (result, result_sazman)

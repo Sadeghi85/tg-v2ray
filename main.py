@@ -93,7 +93,7 @@ array_reality = []
 with open("./generated/nomatch.txt", "w", encoding="utf-8") as file:
     file.write("")
 
-with open("found_channels.json") as file:
+with open("v2ray_channels_test.json") as file:
     found_channels = json.load(file)
 
 found_channels = list(set(found_channels))
@@ -267,7 +267,9 @@ result_reality, result_sazman_reality = make_title(
     array_input=array_reality, type="reality"
 )
 
-result_all = result_ss + result_trojan + result_vmess + result_vless + result_reality
+
+# result_all = result_ss + result_trojan + result_vmess + result_vless + result_reality
+result_all = result_trojan + result_vmess + result_vless + result_reality
 result_sazman_all = (
     result_sazman_ss
     + result_sazman_trojan
@@ -276,8 +278,25 @@ result_sazman_all = (
     + result_sazman_reality
 )
 
-random.shuffle(result_all)
-random.shuffle(result_sazman_all)
+
+result_vmess = sorted(result_vmess, key=lambda x: x["date"], reverse=True)
+result_ss = sorted(result_ss, key=lambda x: x["date"], reverse=True)
+result_trojan = sorted(result_trojan, key=lambda x: x["date"], reverse=True)
+result_vless = sorted(result_vless, key=lambda x: x["date"], reverse=True)
+result_reality = sorted(result_reality, key=lambda x: x["date"], reverse=True)
+
+result_all = sorted(result_all, key=lambda x: x["date"], reverse=True)
+result_sazman_all = sorted(result_sazman_all, key=lambda x: x["date"], reverse=True)
+
+
+result_vmess = [d["url"] for d in result_vmess]
+result_ss = [d["url"] for d in result_ss]
+result_trojan = [d["url"] for d in result_trojan]
+result_vless = [d["url"] for d in result_vless]
+result_reality = [d["url"] for d in result_reality]
+
+result_all = [d["url"] for d in result_all]
+result_sazman_all = [d["url"] for d in result_sazman_all]
 
 chunk_size = 100  # maximum size of each chunk
 chunks = []
