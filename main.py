@@ -78,11 +78,11 @@ def download_and_parse(channel, wanted_date=None, before=None, results=None):
     return results
 
 
-pattern_ss = r"(?<![\w-])(ss://[^\s<>#]+)"
-pattern_trojan = r"(?<![\w-])(trojan://[^\s<>#]+)"
-pattern_vmess = r"(?<![\w-])(vmess://[^\s<>#]+)"
-pattern_vless = r"(?<![\w-])(vless://(?:(?!=reality)[^\s<>#])+(?=[\s<>#]))"
-pattern_reality = r"(?<![\w-])(vless://[^\s<>#]+?security=reality[^\s<>#]*)"
+pattern_ss = r"(?<![\w-])(ss://[^\s<>#|]+)"
+pattern_trojan = r"(?<![\w-])(trojan://[^\s<>#|]+)"
+pattern_vmess = r"(?<![\w-])(vmess://[^\s<>#|]+)"
+pattern_vless = r"(?<![\w-])(vless://(?:(?!=reality)[^\s<>#|])+(?=[\s<>#|]))"
+pattern_reality = r"(?<![\w-])(vless://[^\s<>#|]+?security=reality[^\s<>#|]*)"
 
 array_ss = []
 array_trojan = []
@@ -179,14 +179,21 @@ for channel in found_channels:
             text_content = text_message["text"]
 
             text_content = re.sub(
-                r"<code>([^<>]+)</code>",
-                r"\1",
-                re.sub(
-                    r"<a[^<>]+>([^<>]+)</a>",
-                    r"\1",
-                    re.sub(r"\s*", "", text_content),
-                ),
+                r"(</?code>)", r"\1 ", re.sub(r"(</?br/?>)", r"\1 ", text_content)
             )
+            doc = BeautifulSoup(text_content, "html.parser")
+
+            text_content = doc.text
+
+            # text_content = re.sub(
+            #     r"<code>([^<>]+)</code>",
+            #     r"\1",
+            #     re.sub(
+            #         r"<a[^<>]+>([^<>]+)</a>",
+            #         r"\1",
+            #         re.sub(r"\s*", "", text_content),
+            #     ),
+            # )
 
             # print(text_content + "\n")
 
