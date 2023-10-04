@@ -62,7 +62,7 @@ def download_and_parse(channel, wanted_date=None, before=None, results=None):
                     div_message_text = div_message.find(
                         "div", class_="tgme_widget_message_text"
                     )
-                    text_content = div_message_text.prettify()
+                    text_content = str(div_message_text)
                     message_dict = {"text": text_content, "date": datetime_object}
 
                     results.append(message_dict)
@@ -178,6 +178,11 @@ for channel in found_channels:
 
             text_content = text_message["text"]
 
+            # print(
+            #     text_content
+            #     + "\n----------------------------------------------------------------------\n"
+            # )
+
             text_content = re.sub(
                 r"(</?code>)", r"\1 ", re.sub(r"(</?br/?>)", r"\1 ", text_content)
             )
@@ -195,7 +200,10 @@ for channel in found_channels:
             #     ),
             # )
 
-            # print(text_content + "\n")
+            # print(
+            #     text_content
+            #     + "\n----------------------------------------------------------------------\n"
+            # )
 
             matches_ss = re.findall(pattern_ss, text_content, re.IGNORECASE)
             matches_trojan = re.findall(pattern_trojan, text_content, re.IGNORECASE)
