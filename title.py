@@ -12,6 +12,7 @@ import geoip2.database
 import json
 from dns import resolver, rdatatype
 import binascii
+import ast
 
 
 def superscript_string(input_string):
@@ -238,7 +239,9 @@ def make_title(array_input, type):
 
             try:
                 # json_params = json.loads(json_string)
-                json_params = json.JSONDecoder(strict=False).decode(json_string)
+                json_params = json.JSONDecoder(strict=False).decode(
+                    json.dumps(ast.literal_eval(json_string))
+                )
 
                 for k, v in json_params.items():
                     key = re.sub(
