@@ -237,7 +237,8 @@ def make_title(array_input, type):
             dict_params = {}
 
             try:
-                json_params = json.loads(json_string)
+                # json_params = json.loads(json_string)
+                json_params = json.JSONDecoder(strict=False).decode(json_string)
 
                 for k, v in json_params.items():
                     key = re.sub(
