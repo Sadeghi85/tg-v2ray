@@ -240,7 +240,15 @@ def make_title(array_input, type):
             try:
                 # json_params = json.loads(json_string)
                 json_params = json.JSONDecoder(strict=False).decode(
-                    json.dumps(ast.literal_eval(json_string))
+                    json.dumps(
+                        ast.literal_eval(
+                            re.sub(
+                                r":\s*(?<!['\"])([^'\"]+?)['\"]?\s*(?=[,\n}])",
+                                r": '\1'",
+                                json_string,
+                            )
+                        )
+                    )
                 )
 
                 for k, v in json_params.items():
