@@ -243,8 +243,8 @@ def make_title(array_input, type):
                     json.dumps(
                         ast.literal_eval(
                             re.sub(
-                                r":\s*(?<!['\"])([^'\"]+?)['\"]?\s*(?=[,\n}])",
-                                r": '\1'",
+                                r"(?<=[{,\r\n])(\s*['\"][^'\"]+['\"]\s*:\s*)([^'\"\r\n,}]+)(?=[,\r\n}])",
+                                r"\1'\2'",
                                 json_string,
                             )
                         )
