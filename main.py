@@ -213,7 +213,8 @@ for channel in found_channels:
 
             for index, element in enumerate(matches_vmess):
                 matches_vmess[index] = (
-                    re.sub(r"#[^#]+$", "", html.unescape(element)) + f"#{channel}"
+                    re.sub(r"@.+$", "", re.sub(r"#[^#]+$", "", html.unescape(element)))
+                    + f"#{channel}"
                 )
 
             for index, element in enumerate(matches_ss):
