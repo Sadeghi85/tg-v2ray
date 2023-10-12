@@ -82,7 +82,8 @@ def is_valid_domain(hostname):
             and ext.suffix != ""
             and hostname == ".".join(part for part in ext[:3] if part)
         )
-    except:
+    except Exception as e:
+        print("An exception occurred:", e)
         return False
 
 
@@ -293,6 +294,7 @@ def make_title(array_input, type):
             if dict_params.get("sni", "") != "":
                 if not is_valid_domain(dict_params["sni"]):
                     dict_params["sni"] = ""
+                    print(f"invalid sni: {dict_params.get('sni', '')}\n")
                 else:
                     dict_params["sni"] = str(dict_params["sni"]).lower()
 
@@ -431,6 +433,7 @@ def make_title(array_input, type):
             if dict_params.get("sni", "") != "":
                 if not is_valid_domain(dict_params["sni"]):
                     dict_params["sni"] = ""
+                    print(f"invalid sni: {dict_params.get('sni', '')}\n")
                 else:
                     dict_params["sni"] = str(dict_params["sni"]).lower()
 
@@ -574,6 +577,7 @@ def make_title(array_input, type):
             if dict_params.get("sni", "") != "":
                 if not is_valid_domain(dict_params["sni"]):
                     dict_params["sni"] = ""
+                    print(f"invalid sni: {dict_params.get('sni', '')}\n")
                 else:
                     dict_params["sni"] = str(dict_params["sni"]).lower()
 
