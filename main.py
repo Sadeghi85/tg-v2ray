@@ -93,7 +93,7 @@ array_reality = []
 with open("./generated/nomatch.txt", "w", encoding="utf-8") as file:
     file.write("")
 
-with open("v2ray_channels_test.json") as file:
+with open("found_channels.json") as file:
     found_channels = json.load(file)
 
 found_channels = list(set(found_channels))
