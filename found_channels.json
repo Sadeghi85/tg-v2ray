@@ -1,6 +1,5 @@
 [
     "academi_vpn",
-    "activevpn_v2ray",
     "alfred_config",
     "an0nymousteam",
     "antifilterjadid",
@@ -9,7 +8,6 @@
     "arv2ray",
     "azad_intrnet",
     "bakvpns",
-    "bed0nemarz",
     "bigsmoke_config",
     "bored_vpn",
     "cav2ray",
@@ -21,7 +19,6 @@
     "dailyv2ry",
     "darksectora",
     "dav2ray",
-    "deamnet_proxy",
     "digiv2ray",
     "directvpn",
     "eliv2ray",
@@ -59,12 +56,11 @@
     "mehrosaboran",
     "meli_proxyy",
     "melov2ray",
-    "networknim",
+    "mtproxy_lists",
     "nufilter",
     "offlinenet",
     "outline_ir",
     "payam_nsi",
-    "persvpn",
     "polproxy",
     "privatevpns",
     "proxy_kafee",
@@ -96,7 +92,6 @@
     "v2pedia",
     "v2raand",
     "v2rang_255",
-    "v2raxx",
     "v2ray1_ng",
     "v2ray_alpha",
     "v2ray_configs_pool",
@@ -145,5 +140,6 @@
     "webovpn",
     "wizyvpn",
     "xvproxy",
-    "zibanabz"
+    "zibanabz",
+    "zigma_config"
 ]
