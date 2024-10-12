@@ -15,6 +15,7 @@
     "directvpn",
     "fix_proxy",
     "freeiranweb",
+    "getv2ray2930",
     "ghalagyann",
     "icv2ray",
     "iranargo",
@@ -39,12 +40,9 @@
     "tehranargo",
     "tls_v2ray",
     "unlimiteddev",
-    "v2pedia",
     "v2rang_255",
     "v2ray1_ng",
-    "v2ray1ran",
     "v2ray_alpha",
-    "v2rayi_net",
     "v2rayng_fast",
     "v2rayng_ip",
     "v2rayng_vpnrog",
@@ -67,7 +65,6 @@
     "vpnstorefast",
     "vpnwedbaz",
     "vpnx1x",
-    "webovpn",
     "x2ray_team",
     "xvproxy"
 ]
